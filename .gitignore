@@ -1,0 +1,10 @@
+# Claude Code internal files
+.claude/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
