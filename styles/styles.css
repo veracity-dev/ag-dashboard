@@ -151,6 +151,18 @@ svg text{ font-family: ui-monospace,"SF Mono","Cascadia Mono",monospace; }
 .hero-block{ height:110px; border-radius:var(--radius-sm); margin-bottom:12px; }
 .hero-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
 
+/* ---- hero-card v2: landscape photo + two-col body ---- */
+.hero-card-v2{ padding:0; overflow:hidden; display:flex; flex-direction:column; }
+.hero-photo-wrap{ position:relative; height:155px; overflow:hidden; flex-shrink:0; }
+.hero-photo-overlay{ position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between;
+  padding:12px 14px; background:linear-gradient(180deg, rgba(0,0,0,.08) 0%, rgba(0,0,0,.68) 100%); }
+.hero-photo-toprow{ display:flex; justify-content:space-between; align-items:flex-start; }
+.hero-photo-big{ font-size:17px; font-weight:700; color:#fff; }
+.hero-body{ display:flex; flex:1; }
+.hero-col{ flex:1; min-width:0; padding:14px; }
+.hero-col + .hero-col{ border-left:1px solid var(--border); }
+.hero-col .mini-rows{ grid-template-columns:1fr; margin-top:0; }
+
 .mini-rows{ display:grid; grid-template-columns:1fr 1fr; gap:0 18px; margin-top:12px; }
 .mini-row{ display:flex; justify-content:space-between; gap:8px; padding:5px 0; font-size:11.5px; border-bottom:1px solid var(--border); }
 .mini-row .k{ color:var(--text-faint); }

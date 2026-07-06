@@ -35,6 +35,32 @@ function areaChart(values, color, opts={}){
   return svg;
 }
 
+function groupedBarChart(groups, series, colors, opts={}){
+  const W=opts.w||220, H=opts.h||110;
+  const padB=18, padT=6, padL=2, padR=2;
+  const svg = svgEl(W,H);
+  const plotW=W-padL-padR, plotH=H-padB-padT;
+  const allVals = series.flatMap(s=>s.values);
+  const max = Math.max(...allVals)*1.08;
+  const groupW = plotW/groups.length;
+  const nS = series.length;
+  const totalBar = groupW*0.7;
+  const bw = totalBar/nS;
+  const gpad = (groupW-totalBar)/2;
+  groups.forEach((g,gi)=>{
+    const gx = padL+gi*groupW;
+    series.forEach((s,si)=>{
+      const v = s.values[gi];
+      const h = (v/max)*plotH;
+      const x = gx+gpad+si*(bw+1);
+      const y = padT+plotH-h;
+      svg.appendChild(el("rect",{x,y,width:bw*0.9,height:h,rx:2.5,fill:colors[si]}));
+    });
+    svg.appendChild(el("text",{x:gx+groupW/2,y:H-4,fill:"var(--text-faint)","font-size":8,"text-anchor":"middle"})).textContent=g;
+  });
+  return svg;
+}
+
 function barChart(values, colorFn, opts={}){
   const W=opts.w||400, H=opts.h||130, padB=opts.labels?18:4;
   const svg = svgEl(W,H);
@@ -258,11 +284,29 @@ document.getElementById("c1-capture-fill").style.width = Math.round(c1CycleDay/c
 document.getElementById("c1-capture-caption").textContent =
   `Day ${c1CycleDay} of ${c1CycleLen} · Sentinel-2 pass Fri · Drone flight Mon`;
 
-const hero1Rows = [["Disease Risk Score","38% · Warning"],["Soil moisture (NDMI)","0.13 · Warning"],["Cycles at high priority","2 of 2"],["Recommended action","Inspect + irrigate"]];
+const hero1Rows = [
+  ["Disease Risk Score","38% · Warning"],
+  ["Soil moisture (NDMI)","0.13 · Warning"],
+  ["Canopy vigour","Low · ▼ 12%"],
+  ["Cycles at high priority","2 of 2"],
+  ["Recommended action","Inspect + irrigate"],
+];
 const c1h1 = document.getElementById("c1-hero1-rows");
 hero1Rows.forEach(([k,v])=>{
   const r = document.createElement("div"); r.className="mini-row";
   r.innerHTML = `<span class="k">${k}</span><span class="v mono">${v}</span>`; c1h1.appendChild(r);
+});
+
+mount("c1-hero1-bars", groupedBarChart(
+  ["W10","W11","W12","W13","W14"],
+  [{values:[78,81,80,82,84]},{values:[70,67,62,56,50]}],
+  ["var(--green)","var(--amber)"],
+  {w:220,h:106}
+));
+[["var(--green)","Target"],["var(--amber)","Block C4"]].forEach(([c,n])=>{
+  const d = document.createElement("div"); d.className="legend-item";
+  d.innerHTML = `<span class="dot" style="background:${c}"></span>${n}`;
+  document.getElementById("c1-hero1-legend").appendChild(d);
 });
 
 mount("c1-hero2-spark", areaChart([62,68,64,74,80,76,88,84,92], "var(--green)", {w:520,h:56,dots:false}));

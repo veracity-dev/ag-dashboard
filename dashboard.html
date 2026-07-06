@@ -77,13 +77,30 @@
         </div>
       </div>
 
-      <div class="card span-6 hero-card">
-        <div class="hero-block" style="background:linear-gradient(135deg,#a85a3d,#7a2e22 65%,#3a1712);"></div>
-        <div class="hero-head">
-          <div class="card-title" style="margin:0;">Block C4 — Priority alert</div>
-          <span class="delta down">2 of 2 cycles</span>
+      <div class="card span-6 hero-card-v2">
+        <div class="hero-photo-wrap" id="c1-hero1-photo" style="background-image:url('images/green-tea-bud-leaves-green-tea-plantations-morning-nature-background.jpg');background-size:cover;background-position:center 45%;">
+          <div class="hero-photo-overlay">
+            <div class="hero-photo-toprow">
+              <span class="chip-float" style="border-color:rgba(226,104,90,.45);"><span class="dot" style="background:var(--red);"></span>Priority alert</span>
+              <span class="delta down">2 of 2 cycles</span>
+            </div>
+            <div>
+              <div class="card-title" style="color:rgba(238,242,245,.75);margin-bottom:3px;">Block C4</div>
+              <div class="hero-photo-big">Immediate action required</div>
+            </div>
+          </div>
         </div>
-        <div class="mini-rows" id="c1-hero1-rows"></div>
+        <div class="hero-body">
+          <div class="hero-col">
+            <div class="card-title">Block metrics</div>
+            <div class="mini-rows" id="c1-hero1-rows"></div>
+          </div>
+          <div class="hero-col">
+            <div class="card-title">Score history · W10–W14</div>
+            <div id="c1-hero1-bars"></div>
+            <div id="c1-hero1-legend" style="display:flex;gap:10px;margin-top:6px;"></div>
+          </div>
+        </div>
       </div>
 
       <div class="card span-6 hero-card">
