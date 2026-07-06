@@ -22,7 +22,7 @@
       <div class="avatar"></div>
       <div>
         <div class="user-name">V. Kumara</div>
-        <div class="user-role">Estate manager</div>
+        <div class="user-role">Admin</div>
       </div>
     </div>
   </aside>
@@ -57,31 +57,31 @@
 
       <div class="card span-4">
         <div class="side-section">
-          <div class="card-title">Moon phase</div>
-          <div class="moon-row">
-            <div class="moon-icon"></div>
+          <div class="card-title">Block vitals</div>
+          <div class="vitals-row">
             <div class="mini-ring-row" id="c1-rings"></div>
           </div>
         </div>
         <div class="side-section">
-          <div class="card-title">Quick controls</div>
+          <div class="card-title">Imagery sources</div>
           <div class="icon-grid-6" id="c1-icongrid"></div>
         </div>
         <div class="side-section">
-          <div class="card-title">Now playing</div>
+          <div class="card-title">Next capture window</div>
           <div class="scrubber">
-            <button class="round-btn small"><svg width="9" height="9" viewBox="0 0 12 12"><path d="M3,2 L10,6 L3,10 Z" fill="currentColor"/></svg></button>
-            <div class="scrubber-track"><div class="scrubber-fill"></div></div>
-            <span class="scrubber-dot" style="background:var(--amber)"></span>
-            <span class="scrubber-dot" style="background:var(--green)"></span>
+            <div class="scrubber-track"><div class="scrubber-fill" id="c1-capture-fill"></div></div>
+            <span class="scrubber-dot" style="background:var(--green)" title="Sentinel-2 pass"></span>
+            <span class="scrubber-dot" style="background:var(--amber)" title="Drone flight"></span>
           </div>
+          <div class="scrubber-caption" id="c1-capture-caption"></div>
         </div>
       </div>
 
       <div class="card span-6 hero-card">
-        <div class="hero-block" style="background:linear-gradient(135deg,#3d6f7a,#1c3540 65%,#12242c);"></div>
+        <div class="hero-block" style="background:linear-gradient(135deg,#a85a3d,#7a2e22 65%,#3a1712);"></div>
         <div class="hero-head">
-          <div class="card-title" style="margin:0;">IFCO — Valley station</div>
+          <div class="card-title" style="margin:0;">Block C4 — Priority alert</div>
+          <span class="delta down">2 of 2 cycles</span>
         </div>
         <div class="mini-rows" id="c1-hero1-rows"></div>
       </div>
@@ -147,44 +147,44 @@
       <div class="card span-12" style="display:flex; align-items:center; gap:14px;">
         <div class="search-bar">
           <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="6" cy="6" r="4.5" fill="none" stroke="currentColor" stroke-width="1.4"/><line x1="9.5" y1="9.5" x2="13" y2="13" stroke="currentColor" stroke-width="1.4"/></svg>
-          Search tickets, people, projects…
+          Search blocks, tasks, agronomists…
         </div>
         <div style="flex:1"></div>
-        <span class="delta up">14 online</span>
+        <span class="delta up">6 field staff on estate</span>
       </div>
 
       <div class="banner span-7" style="aspect-ratio:16/9;" id="c3-banner"></div>
 
       <div class="card span-5" style="display:flex; flex-direction:column; gap:10px; justify-content:center;">
         <div>
-          <div class="card-title">Open tickets</div>
-          <div class="metric-value mono">37</div>
+          <div class="card-title">Open field tasks</div>
+          <div class="metric-value mono">23</div>
           <span class="delta down">▼ 6 vs last week</span>
         </div>
         <div style="height:1px; background:var(--border);"></div>
         <div>
-          <div class="card-title">Avg resolution</div>
+          <div class="card-title">Avg task turnaround</div>
           <div class="metric-value mono">4h 12m</div>
           <span class="delta up">▲ 18% faster</span>
         </div>
       </div>
 
       <div class="card span-6">
-        <div class="card-title">Tickets by assignee</div>
-        <div class="card-sub">This sprint</div>
+        <div class="card-title">Field tasks by agronomist</div>
+        <div class="card-sub">Monitoring cycle 24</div>
         <div id="c3-tickets"></div>
       </div>
 
       <div class="card span-6">
         <div class="card-title">Activity</div>
-        <div class="card-sub">Completion by team</div>
+        <div class="card-sub">Task completion by discipline</div>
         <div class="grid g-12" style="gap:10px;" id="c3-rings"></div>
       </div>
 
-      <div class="card span-3 swatch-card"><div class="card-title">Design</div><div class="swatch" style="background:linear-gradient(135deg,var(--green),var(--green-dim));"></div><div class="metric-value mono" style="font-size:15px;">18 tasks</div></div>
-      <div class="card span-3 swatch-card"><div class="card-title">Engineering</div><div class="swatch" style="background:linear-gradient(135deg,var(--blue),#2c5877);"></div><div class="metric-value mono" style="font-size:15px;">42 tasks</div></div>
-      <div class="card span-3 swatch-card"><div class="card-title">QA</div><div class="swatch" style="background:linear-gradient(135deg,var(--amber),#8a651c);"></div><div class="metric-value mono" style="font-size:15px;">11 tasks</div></div>
-      <div class="card span-3 swatch-card"><div class="card-title">Support</div><div class="swatch" style="background:linear-gradient(135deg,var(--red),#7a352c);"></div><div class="metric-value mono" style="font-size:15px;">9 tasks</div></div>
+      <div class="card span-3 swatch-card"><div class="card-title">Scouting</div><div class="swatch" style="background:linear-gradient(135deg,var(--green),var(--green-dim));"></div><div class="metric-value mono" style="font-size:15px;">18 tasks</div></div>
+      <div class="card span-3 swatch-card"><div class="card-title">Irrigation</div><div class="swatch" style="background:linear-gradient(135deg,var(--blue),#2c5877);"></div><div class="metric-value mono" style="font-size:15px;">9 tasks</div></div>
+      <div class="card span-3 swatch-card"><div class="card-title">Spraying</div><div class="swatch" style="background:linear-gradient(135deg,var(--amber),#8a651c);"></div><div class="metric-value mono" style="font-size:15px;">11 tasks</div></div>
+      <div class="card span-3 swatch-card"><div class="card-title">Harvest</div><div class="swatch" style="background:linear-gradient(135deg,var(--red),#7a352c);"></div><div class="metric-value mono" style="font-size:15px;">42 tasks</div></div>
     </div>
   </div>
 
@@ -192,42 +192,42 @@
   <div class="view" id="v4">
     <div class="grid g-12">
 
-      <div class="card span-4"><div class="card-title">MRR</div><div class="metric-value mono">$84,210</div><span class="delta up">▲ 6.1%</span></div>
-      <div class="card span-4"><div class="card-title">Burn rate</div><div class="metric-value mono">$31,900/mo</div><span class="delta down">▼ 2.4%</span></div>
-      <div class="card span-4"><div class="card-title">Runway</div><div class="metric-value mono">14.2 months</div><span class="delta up">▲ 1.1 mo</span></div>
+      <div class="card span-4"><div class="card-title">Revenue protected</div><div class="metric-value mono">$18,420</div><span class="delta up">▲ 6.1%</span></div>
+      <div class="card span-4"><div class="card-title">Revenue at risk</div><div class="metric-value mono">$4,900</div><span class="delta down">▼ 2.4%</span></div>
+      <div class="card span-4"><div class="card-title">ROI of precision program</div><div class="metric-value mono">27.4%</div><span class="delta up">▲ 1.1 pts</span></div>
 
       <div class="banner span-6" style="aspect-ratio:16/9;" id="c4-banner1"></div>
       <div class="banner span-6" style="aspect-ratio:16/9;" id="c4-banner2"></div>
 
       <div class="card span-4" style="display:flex; flex-direction:column; align-items:center;">
-        <div class="card-title" style="align-self:flex-start;">Spend by category</div>
+        <div class="card-title" style="align-self:flex-start;">Input cost savings by category</div>
         <div id="c4-pie" style="margin-top:6px;"></div>
         <div class="legend" style="margin-top:10px; justify-content:center;" id="c4-pie-legend"></div>
       </div>
       <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Monthly savings</div>
+        <div class="card-title" style="align-self:flex-start;">Input cost savings</div>
         <div class="ring-wrap" id="c4-ring1" style="margin-top:6px;"></div>
       </div>
       <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Cost efficiency</div>
+        <div class="card-title" style="align-self:flex-start;">Yield prediction confidence</div>
         <div class="ring-wrap" id="c4-ring2" style="margin-top:6px;"></div>
       </div>
 
       <div class="card span-3" style="display:flex; flex-direction:column; align-items:center;">
-        <div class="card-title" style="align-self:flex-start;">Vendor split</div>
+        <div class="card-title" style="align-self:flex-start;">Blocks vs. yield baseline</div>
         <div id="c4-pie2" style="margin-top:6px;"></div>
       </div>
       <div class="card span-3" style="display:flex; flex-direction:column; align-items:center;">
-        <div class="card-title" style="align-self:flex-start;">Payment mix</div>
+        <div class="card-title" style="align-self:flex-start;">Agrochemical use reduction</div>
         <div id="c4-pie3" style="margin-top:6px;"></div>
       </div>
       <div class="card span-6">
-        <div class="card-title">Revenue vs. expenses</div>
-        <div class="card-sub">Last 12 months</div>
+        <div class="card-title">30-day yield forecast vs. actual</div>
+        <div class="card-sub">Green leaf, kg/ha · last 12 periods</div>
         <div id="c4-dual"></div>
         <div class="legend" style="margin-top:6px;">
-          <div class="legend-item"><span class="dot" style="background:var(--green)"></span>Revenue</div>
-          <div class="legend-item"><span class="dot" style="background:var(--amber)"></span>Expenses</div>
+          <div class="legend-item"><span class="dot" style="background:var(--green)"></span>Forecast</div>
+          <div class="legend-item"><span class="dot" style="background:var(--amber)"></span>Actual</div>
         </div>
       </div>
     </div>

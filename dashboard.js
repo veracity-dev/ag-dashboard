@@ -217,7 +217,7 @@ c1LegendItems.forEach(([n,c])=>{
 });
 
 const c1rings = document.getElementById("c1-rings");
-[["Illum.",78,"var(--amber)"],["Tide",45,"var(--blue)"],["Cycle",62,"var(--green)"]].forEach(([l,pct,color])=>{
+[["Vigour",84,"var(--green)"],["Flush",71,"#a8d86a"],["Canopy",90,"var(--blue)"]].forEach(([l,pct,color])=>{
   const wrap = document.createElement("div"); wrap.className="mini-ring";
   const ringHost = document.createElement("div"); ringHost.className="ring-wrap"; ringHost.style.position="relative";
   ringHost.appendChild(ringChart(pct,color,40,5));
@@ -230,22 +230,35 @@ const c1rings = document.getElementById("c1-rings");
   c1rings.appendChild(wrap);
 });
 
-const c1IconGridGlyphs = [
-  '<circle cx="7" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="1.3"/>',
-  '<path d="M3,9 L3,5 Q3,3 5,3 L9,3 Q11,3 11,5 L11,9 Z" fill="none" stroke="currentColor" stroke-width="1.2"/>',
-  '<path d="M4,9 Q4,5 7,5 Q10,5 10,9" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="4" r="1.4" fill="currentColor"/>',
-  '<rect x="3" y="4" width="8" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M5,4 V3 M9,4 V3" stroke="currentColor" stroke-width="1.2"/>',
-  '<circle cx="7" cy="7" r="2.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M7,2 V3.4 M7,10.6 V12 M2,7 H3.4 M10.6,7 H12" stroke="currentColor" stroke-width="1.2"/>',
-  '<path d="M4,10 L4,6 Q4,4 7,4 Q10,4 10,6 L10,10" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="4" cy="10" r="1.1" fill="currentColor"/><circle cx="10" cy="10" r="1.1" fill="currentColor"/>',
+/* Imagery sources feeding the composite score, per the KPI framework's
+   Data Source column (Drone / Sentinel-2 / Landsat / AI Fusion / estate
+   records) — dot color shows whether each feed is fresh or stale. */
+const c1ImagerySources = [
+  ["Drone", "ok", '<path d="M4,4 L10,10 M10,4 L4,10" stroke="currentColor" stroke-width="1.3"/><circle cx="4" cy="4" r="1.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="10" cy="4" r="1.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="4" cy="10" r="1.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="10" cy="10" r="1.6" fill="none" stroke="currentColor" stroke-width="1.1"/>'],
+  ["Sentinel-2", "ok", '<rect x="4.5" y="4.5" width="5" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M2,7 H4.5 M9.5,7 H12" stroke="currentColor" stroke-width="1.2"/>'],
+  ["Landsat", "stale", '<rect x="4.5" y="4.5" width="5" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M2,3 L4.5,5.5 M12,3 L9.5,5.5" stroke="currentColor" stroke-width="1.2"/>'],
+  ["AI Fusion", "ok", '<circle cx="7" cy="7" r="1.6" fill="currentColor"/><circle cx="3" cy="4" r="1.2" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="11" cy="4" r="1.2" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="7" cy="11" r="1.2" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M7,7 L3,4 M7,7 L11,4 M7,7 L7,11" stroke="currentColor" stroke-width="1"/>'],
+  ["Weather feed", "ok", '<path d="M4,9 Q3,9 3,7.5 Q3,6 4.5,6 Q5,4 7,4 Q9,4 9.3,6 Q10.5,6.2 10.5,7.7 Q10.5,9 9.3,9 Z" fill="none" stroke="currentColor" stroke-width="1.1"/>'],
+  ["Estate records", "stale", '<rect x="4" y="3" width="6" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M5.5,5.5 H8.5 M5.5,7.5 H8.5 M5.5,9.5 H7" stroke="currentColor" stroke-width="1"/>'],
 ];
 const c1grid = document.getElementById("c1-icongrid");
-c1IconGridGlyphs.forEach(glyph=>{
+c1ImagerySources.forEach(([name,status,glyph])=>{
   const b = document.createElement("div"); b.className="icon-btn";
-  b.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" style="color:var(--text-dim)">${glyph}</svg>`;
+  b.title = `${name} — ${status==="ok"?"up to date":"stale, needs refresh"}`;
+  const dotColor = status==="ok" ? "var(--green)" : "var(--amber)";
+  b.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" style="color:var(--text-dim)">${glyph}</svg><span class="dot" style="background:${dotColor}"></span>`;
   c1grid.appendChild(b);
 });
 
-const hero1Rows = [["Elevation","1,240 m"],["Trail length","8.2 km"],["Rainfall","62 mm"],["Sightings","14"]];
+/* Next capture window: progress through the current revisit cycle, with
+   waypoint dots for the two imagery cadences named in the KPI framework
+   (Sentinel-2's ~5-day revisit and on-demand/weekly drone flights). */
+const c1CycleDay = 3, c1CycleLen = 5;
+document.getElementById("c1-capture-fill").style.width = Math.round(c1CycleDay/c1CycleLen*100)+"%";
+document.getElementById("c1-capture-caption").textContent =
+  `Day ${c1CycleDay} of ${c1CycleLen} · Sentinel-2 pass Fri · Drone flight Mon`;
+
+const hero1Rows = [["Disease Risk Score","38% · Warning"],["Soil moisture (NDMI)","0.13 · Warning"],["Cycles at high priority","2 of 2"],["Recommended action","Inspect + irrigate"]];
 const c1h1 = document.getElementById("c1-hero1-rows");
 hero1Rows.forEach(([k,v])=>{
   const r = document.createElement("div"); r.className="mini-row";
@@ -296,7 +309,7 @@ zones.forEach(([n,v,c])=>{
 });
 
 /* ================= VIEW 3 ================= */
-bannerWithOverlay("c3-banner","autumn","Sprint 24","Week 2 of 3","On track");
+bannerWithOverlay("c3-banner","autumn","Monitoring cycle 24","Day 3 of 5","On track");
 
 const tickets = [["A. Novak","12"],["R. Diaz","9"],["S. Coates","7"],["M. Iyer","6"],["J. Park","3"]];
 const c3t = document.getElementById("c3-tickets");
@@ -309,7 +322,7 @@ tickets.forEach(([n,v])=>{
   c3t.appendChild(row);
 });
 
-const teams = [["Design",84,"var(--green)"],["Eng.",67,"var(--blue)"],["QA",91,"var(--amber)"],["Support",58,"var(--red)"]];
+const teams = [["Scouting",84,"var(--green)"],["Irrigation",67,"var(--blue)"],["Spraying",91,"var(--amber)"],["Harvest",58,"var(--red)"]];
 const c3rings = document.getElementById("c3-rings");
 teams.forEach(([n,pct,color])=>{
   const wrap = document.createElement("div"); wrap.className="span-3";
@@ -325,26 +338,26 @@ teams.forEach(([n,pct,color])=>{
 });
 
 /* ================= VIEW 4 ================= */
-bannerWithOverlay("c4-banner1","dusk","Facility — East Campus","Utility cost -8%","Optimized");
-bannerWithOverlay("c4-banner2","forest","Facility — South Depot","Utility cost +3%","Review");
+bannerWithOverlay("c4-banner1","alpine","Nuwara block — Highland","Yield +4.2% vs baseline","Above target");
+bannerWithOverlay("c4-banner2","dusk","Dimbula block — Lowland","Yield -1.8% vs baseline","Below target");
 
-mount("c4-pie", pieChart([{v:38,color:"var(--green)"},{v:26,color:"var(--blue)"},{v:20,color:"var(--amber)"},{v:16,color:"var(--red)"}]));
+mount("c4-pie", pieChart([{v:34,color:"var(--green)"},{v:22,color:"var(--blue)"},{v:28,color:"var(--amber)"},{v:16,color:"var(--red)"}]));
 const pieLegend = document.getElementById("c4-pie-legend");
-[["Payroll","var(--green)"],["Infra","var(--blue)"],["Marketing","var(--amber)"],["Other","var(--red)"]].forEach(([n,c])=>{
+[["Fertilizer","var(--green)"],["Pesticide","var(--blue)"],["Irrigation","var(--amber)"],["Labor","var(--red)"]].forEach(([n,c])=>{
   const d = document.createElement("div"); d.className="legend-item";
   d.innerHTML = `<span class="dot" style="background:${c}"></span>${n}`; pieLegend.appendChild(d);
 });
 
-const ring1 = document.getElementById("c4-ring1"); ring1.appendChild(ringChart(64,"var(--green)",100,10)); centerLabel("c4-ring1","$4,120","saved / mo");
-const ring2b = document.getElementById("c4-ring2"); ring2b.appendChild(ringChart(81,"var(--blue)",100,10)); centerLabel("c4-ring2","81","score");
+const ring1 = document.getElementById("c4-ring1"); ring1.appendChild(ringChart(64,"var(--green)",100,10)); centerLabel("c4-ring1","$6,840","saved / qtr");
+const ring2b = document.getElementById("c4-ring2"); ring2b.appendChild(ringChart(83,"var(--blue)",100,10)); centerLabel("c4-ring2","83%","confidence");
 
-mount("c4-pie2", pieChart([{v:50,color:"var(--green)"},{v:30,color:"var(--surface-3)"},{v:20,color:"var(--amber)"}],90));
-mount("c4-pie3", pieChart([{v:60,color:"var(--blue)"},{v:40,color:"var(--green-dim)"}],90));
+mount("c4-pie2", pieChart([{v:45,color:"var(--green)"},{v:35,color:"var(--surface-3)"},{v:20,color:"var(--red)"}],90));
+mount("c4-pie3", pieChart([{v:72,color:"var(--green)"},{v:28,color:"var(--amber)"}],90));
 
 (function(){
   const W=680,H=140; const svg = svgEl(W,H);
-  const rev = [40,44,46,50,55,58,60,66,70,74,80,88];
-  const exp = [30,31,33,34,36,38,40,42,44,45,48,50];
+  const forecast = [62,65,67,70,72,74,76,78,80,82,85,88];
+  const actual =   [56,60,61,64,68,68,70,74,74,78,79,84];
   function toPath(vals,color,fillGrad){
     const max=100, step=W/(vals.length-1);
     const pts = vals.map((v,i)=>[i*step, H-10-(v/max)*(H-20)]);
@@ -353,7 +366,7 @@ mount("c4-pie3", pieChart([{v:60,color:"var(--blue)"},{v:40,color:"var(--green-d
     svg.appendChild(el("path",{d, fill:"none", stroke:color, "stroke-width":2.5}));
     pts.forEach(p=>svg.appendChild(el("circle",{cx:p[0],cy:p[1],r:2,fill:color})));
   }
-  toPath(exp,"var(--amber)");
-  toPath(rev,"var(--green)");
+  toPath(actual,"var(--amber)");
+  toPath(forecast,"var(--green)");
   mount("c4-dual", svg);
 })();

@@ -130,20 +130,22 @@ svg text{ font-family: ui-monospace,"SF Mono","Cascadia Mono",monospace; }
 .legend-strip{ display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
 
 .side-section + .side-section{ margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
-.moon-row{ display:flex; align-items:center; gap:14px; margin-top:8px; }
-.moon-icon{ width:44px; height:44px; border-radius:50%; flex:none;
-  background:radial-gradient(circle at 32% 30%, #f2d98a, #d99a3d 60%, #8a5a1c 100%); box-shadow:0 0 0 1px rgba(255,255,255,.08) inset; }
+.vitals-row{ display:flex; align-items:center; gap:14px; margin-top:8px; }
+.vitals-icon{ width:44px; height:44px; border-radius:50%; flex:none;
+  background:radial-gradient(circle at 32% 30%, #a8d86a, #6fa83f 60%, #2c4a26 100%); box-shadow:0 0 0 1px rgba(255,255,255,.08) inset; }
 .mini-ring-row{ display:flex; gap:10px; flex:1; justify-content:space-between; }
 .mini-ring{ display:flex; flex-direction:column; align-items:center; gap:4px; }
 .mini-ring .n{ font-size:10.5px; font-weight:700; }
 
 .icon-grid-6{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px; }
-.icon-grid-6 .icon-btn{ width:36px; height:36px; margin:0 auto; }
+.icon-grid-6 .icon-btn{ width:36px; height:36px; margin:0 auto; position:relative; }
+.icon-grid-6 .icon-btn .dot{ position:absolute; bottom:-1px; right:-1px; width:7px; height:7px; border:1.5px solid var(--surface); }
 
 .scrubber{ display:flex; align-items:center; gap:8px; margin-top:12px; }
 .scrubber-track{ flex:1; height:4px; border-radius:3px; background:var(--surface-3); overflow:hidden; }
 .scrubber-fill{ height:100%; width:58%; border-radius:3px; background:linear-gradient(90deg,var(--green-dim),var(--green)); }
 .scrubber-dot{ width:14px; height:14px; border-radius:50%; flex:none; }
+.scrubber-caption{ font-size:11px; color:var(--text-faint); margin-top:8px; }
 
 .hero-card{ display:flex; flex-direction:column; }
 .hero-block{ height:110px; border-radius:var(--radius-sm); margin-bottom:12px; }
