@@ -104,12 +104,19 @@
       </div>
 
       <div class="card span-6 hero-card">
-        <div class="hero-block" style="background:linear-gradient(135deg,#5f9143,#2c4a26 65%,#182b14);"></div>
         <div class="hero-head">
-          <div class="card-title" style="margin:0;">2019 — Season index</div>
-          <div class="metric-value mono">84.35</div>
+          <div>
+            <div class="card-title" style="margin:0;">Canopy Density Score</div>
+            <div class="card-sub" style="margin:2px 0 0;">MTVI2 / LAI · vs. block baseline</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="metric-value mono">90.2</div>
+            <span class="delta up" style="margin-top:2px;">Stable</span>
+          </div>
         </div>
-        <div id="c1-hero2-spark"></div>
+        <div class="hero-block" style="background-image:linear-gradient(rgba(16,22,29,.75),rgba(16,22,29,.75)),url('images/canopy-density-score-bg.jpg');background-size:cover;background-position:center 100%;position:relative;overflow:hidden;">
+          <div id="c1-hero2-spark" style="position:absolute;bottom:0;left:0;right:0;"></div>
+        </div>
       </div>
 
       <div class="card span-6">
@@ -254,4 +261,5 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="dashboard.js"></script>
