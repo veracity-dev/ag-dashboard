@@ -28,7 +28,24 @@ svg text{ font-family: ui-monospace,"SF Mono","Cascadia Mono",monospace; }
 
 /* ---- sidebar ---- */
 .sidebar{ width:200px; flex:none; display:flex; flex-direction:column; gap:20px; padding:20px 12px;
-  background:var(--surface); border-right:1px solid var(--border); position:sticky; top:0; height:100vh; }
+  background:var(--surface); border-right:1px solid var(--border); position:sticky; top:0; height:100vh;
+  transition:width .2s ease; overflow-x:hidden; }
+.sidebar.collapsed{ width:52px; }
+.sidebar.collapsed .brand-name,
+.sidebar.collapsed .brand-sub,
+.sidebar.collapsed .tab-label,
+.sidebar.collapsed .user-name,
+.sidebar.collapsed .user-role{ display:none; }
+.sidebar.collapsed .brand{ justify-content:center; }
+.sidebar.collapsed .tab-btn{ justify-content:center; padding:9px; }
+.sidebar.collapsed .sidebar-footer{ justify-content:center; }
+.sidebar-toggle{ display:flex; align-items:center; justify-content:center; width:28px; height:28px;
+  border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--text-faint);
+  cursor:pointer; margin-left:auto; flex-shrink:0; transition:color .15s, background .15s; }
+.sidebar-toggle:hover{ color:var(--text); background:var(--surface-3); }
+.sidebar-toggle svg{ transition:transform .2s; }
+.sidebar.collapsed .sidebar-toggle svg{ transform:rotate(180deg); }
+.sidebar.collapsed .sidebar-toggle{ margin:auto; }
 
 .main{ flex:1; min-width:0; padding:20px; display:flex; flex-direction:column; gap:16px; overflow-y:auto; }
 
@@ -62,7 +79,21 @@ svg text{ font-family: ui-monospace,"SF Mono","Cascadia Mono",monospace; }
 .delta{ display:inline-flex; align-items:center; gap:3px; font-size:11px; font-weight:700; padding:2px 7px; border-radius:999px; }
 .delta.up{ color:var(--green); background:rgba(142,209,79,.14); }
 .delta.down{ color:var(--red); background:rgba(226,104,90,.14); }
+.delta.info{ color:var(--blue); background:rgba(95,168,211,.14); }
 .dot{ width:7px; height:7px; border-radius:50%; display:inline-block; flex:none; }
+
+/* ---- plantation overview tiles + quick rows ---- */
+.stat-tiles{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+.stat-tile{ background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:10px 11px;
+  display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+.stat-tile .l{ font-size:10px; color:var(--text-faint); }
+.stat-tile .n{ font-size:16px; font-weight:700; }
+.stat-rows{ display:grid; grid-template-columns:1fr 1fr; gap:14px 10px; }
+.stat-row-item{ display:flex; align-items:flex-start; gap:8px; }
+.stat-row-item .ico{ width:24px; height:24px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center;
+  background:var(--surface-2); border:1px solid var(--border); color:var(--text-dim); }
+.stat-row-item .l{ font-size:9.5px; color:var(--text-faint); }
+.stat-row-item .v{ font-size:12px; font-weight:600; }
 
 .grid{ display:grid; gap:16px; }
 .g-12{ grid-template-columns:repeat(12,1fr); }
@@ -148,7 +179,7 @@ svg text{ font-family: ui-monospace,"SF Mono","Cascadia Mono",monospace; }
 .scrubber-caption{ font-size:11px; color:var(--text-faint); margin-top:8px; }
 
 .hero-card{ display:flex; flex-direction:column; }
-.hero-block{ height:110px; border-radius:var(--radius-sm); margin-bottom:12px; }
+.hero-block{ height:160px; border-radius:var(--radius-sm); margin-bottom:12px; }
 .hero-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
 
 /* ---- hero-card v2: landscape photo + two-col body ---- */

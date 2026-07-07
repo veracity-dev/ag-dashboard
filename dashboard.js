@@ -39,6 +39,10 @@ Chart.defaults.font.size       = 10;
 Chart.defaults.animation       = false;
 
 /* ---- tabs ---- */
+document.getElementById("sidebar-toggle").addEventListener("click", () => {
+  document.querySelector(".sidebar").classList.toggle("collapsed");
+});
+
 document.getElementById("tabs").addEventListener("click", e => {
   const btn = e.target.closest(".tab-btn"); if (!btn) return;
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b === btn));
@@ -280,6 +284,50 @@ function kpiChart(id, scoreVals, riskVals, weekLabels, opts = {}) {
   });
 }
 
+/* multi-series line chart — renders into div#id. `series` is
+   [{label, data, color}, …]; colors are assigned by the caller in a
+   fixed order (never auto-cycled) and rendered via an external HTML
+   legend rather than Chart.js's built-in one, matching the rest of
+   the dashboard's legend treatment. */
+function multiLineChart(id, series, labels, opts = {}) {
+  const canvas = mkCanvas(id, opts.h || 160);
+  return new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: series.map(s => ({
+        label: s.label,
+        data: s.data,
+        borderColor: rc(s.color),
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.25,
+        pointRadius: 2.5,
+        pointHoverRadius: 5,
+        pointBackgroundColor: rc(s.color),
+        pointBorderColor: CLR.surface,
+        pointBorderWidth: 1,
+        borderWidth: 2,
+      }))
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: CLR.surface2, borderColor: CLR.border, borderWidth: 1,
+          titleColor: CLR.textDim, bodyColor: CLR.text, padding: 10,
+        }
+      },
+      scales: {
+        x: { grid: { color: CLR.border + '60' }, ticks: { font: { size: 8.5 }, maxRotation: 0, color: CLR.textFaint } },
+        y: { grid: { color: CLR.border }, ticks: { font: { size: 8.5 }, color: CLR.textFaint } }
+      }
+    }
+  });
+}
+
 /* ================================================================
    SVG helpers — kept only for decorative landscape banners
    ================================================================ */
@@ -347,42 +395,31 @@ const c1Legend = document.getElementById("c1-legend");
   d.innerHTML = `<span class="dot" style="background:${c}"></span>${n}`; c1Legend.appendChild(d);
 });
 
-/* block vitals mini rings */
-const c1rings = document.getElementById("c1-rings");
-[["Vigour", 84, CLR.green], ["Flush", 71, CLR.green2], ["Canopy", 90, CLR.blue]].forEach(([l, pct, color]) => {
-  const wrap = document.createElement("div"); wrap.className = "mini-ring";
-  const ringHost = document.createElement("div"); ringHost.className = "ring-wrap"; ringHost.style.position = "relative";
-  ringHost.appendChild(ringChart(pct, color, 40, 5));
-  const lab = document.createElement("div"); lab.className = "ring-center";
-  lab.innerHTML = `<span class="n mono" style="font-size:9.5px;">${pct}</span>`;
-  ringHost.appendChild(lab);
-  wrap.appendChild(ringHost);
-  const cap = document.createElement("span"); cap.className = "l"; cap.style.color = "var(--text-faint)"; cap.style.fontSize = "9px"; cap.textContent = l;
-  wrap.appendChild(cap);
-  c1rings.appendChild(wrap);
+/* plantation overview — headline estate stats */
+const c1tiles = document.getElementById("c1-overview-tiles");
+[
+  ["Total estate area", "2,450 ha", "Estate-wide", "info"],
+  ["Tea blocks monitored", "87", "Active", "up"],
+  ["Average bush health", "91%", "Good", "up"],
+  ["Monthly green leaf forecast", "1,820 t", "+6% vs last month", "up"],
+].forEach(([l, n, badge, tone]) => {
+  const tile = document.createElement("div"); tile.className = "stat-tile";
+  tile.innerHTML = `<span class="l">${l}</span><span class="n mono">${n}</span><span class="delta ${tone}">${badge}</span>`;
+  c1tiles.appendChild(tile);
 });
 
-/* imagery source icons */
-const c1ImagerySources = [
-  ["Drone",          "ok",    '<path d="M4,4 L10,10 M10,4 L4,10" stroke="currentColor" stroke-width="1.3"/><circle cx="4" cy="4" r="1.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="10" cy="4" r="1.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="4" cy="10" r="1.6" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="10" cy="10" r="1.6" fill="none" stroke="currentColor" stroke-width="1.1"/>'],
-  ["Sentinel-2",     "ok",    '<rect x="4.5" y="4.5" width="5" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M2,7 H4.5 M9.5,7 H12" stroke="currentColor" stroke-width="1.2"/>'],
-  ["Landsat",        "stale", '<rect x="4.5" y="4.5" width="5" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M2,3 L4.5,5.5 M12,3 L9.5,5.5" stroke="currentColor" stroke-width="1.2"/>'],
-  ["AI Fusion",      "ok",    '<circle cx="7" cy="7" r="1.6" fill="currentColor"/><circle cx="3" cy="4" r="1.2" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="11" cy="4" r="1.2" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="7" cy="11" r="1.2" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M7,7 L3,4 M7,7 L11,4 M7,7 L7,11" stroke="currentColor" stroke-width="1"/>'],
-  ["Weather feed",   "ok",    '<path d="M4,9 Q3,9 3,7.5 Q3,6 4.5,6 Q5,4 7,4 Q9,4 9.3,6 Q10.5,6.2 10.5,7.7 Q10.5,9 9.3,9 Z" fill="none" stroke="currentColor" stroke-width="1.1"/>'],
-  ["Estate records", "stale", '<rect x="4" y="3" width="6" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M5.5,5.5 H8.5 M5.5,7.5 H8.5 M5.5,9.5 H7" stroke="currentColor" stroke-width="1"/>'],
-];
-const c1grid = document.getElementById("c1-icongrid");
-c1ImagerySources.forEach(([name, status, glyph]) => {
-  const b = document.createElement("div"); b.className = "icon-btn";
-  b.title = `${name} — ${status === "ok" ? "up to date" : "stale, needs refresh"}`;
-  b.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" style="color:var(--text-dim)">${glyph}</svg><span class="dot" style="background:${status === "ok" ? "var(--green)" : "var(--amber)"}"></span>`;
-  c1grid.appendChild(b);
+/* plantation overview — quick-glance rows */
+const c1rows = document.getElementById("c1-overview-rows");
+[
+  ["Water-stressed blocks", "6 blocks", '<path d="M7,2 C7,2 3,7 3,9.5 A4,4 0 0 0 11,9.5 C11,7 7,2 7,2 Z" fill="none" stroke="currentColor" stroke-width="1.2"/>'],
+  ["Pest risk", "Moderate", '<path d="M7,2 L12.5,11.5 H1.5 Z" fill="none" stroke="currentColor" stroke-width="1.1"/><line x1="7" y1="6" x2="7" y2="8.3" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="9.8" r="0.6" fill="currentColor"/>'],
+  ["Harvest-ready blocks", "12 blocks", '<circle cx="4" cy="10" r="1.4" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="4" cy="4" r="1.4" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M5.2,5.2 L12,11 M5.2,8.8 L12,3" stroke="currentColor" stroke-width="1.1"/>'],
+  ["Last satellite update", "Yesterday", '<path d="M4,9 Q3,9 3,7.5 Q3,6 4.5,6 Q5,4 7,4 Q9,4 9.3,6 Q10.5,6.2 10.5,7.7 Q10.5,9 9.3,9 Z" fill="none" stroke="currentColor" stroke-width="1.1"/>'],
+].forEach(([l, v, glyph]) => {
+  const item = document.createElement("div"); item.className = "stat-row-item";
+  item.innerHTML = `<span class="ico"><svg width="14" height="14" viewBox="0 0 14 14">${glyph}</svg></span><span><span class="l" style="display:block;">${l}</span><span class="v mono">${v}</span></span>`;
+  c1rows.appendChild(item);
 });
-
-/* capture window scrubber */
-const c1CycleDay = 3, c1CycleLen = 5;
-document.getElementById("c1-capture-fill").style.width = Math.round(c1CycleDay / c1CycleLen * 100) + "%";
-document.getElementById("c1-capture-caption").textContent = `Day ${c1CycleDay} of ${c1CycleLen} · Sentinel-2 pass Fri · Drone flight Mon`;
 
 /* hero card 1 — metric rows */
 const c1h1 = document.getElementById("c1-hero1-rows");
@@ -400,7 +437,7 @@ const h1leg = document.getElementById("c1-hero1-legend");
 
 /* hero card 2 — Canopy Density Score line chart overlay */
 (function () {
-  const canvas = mkCanvas("c1-hero2-spark", 100);
+  const canvas = mkCanvas("c1-hero2-spark", 148);
   new Chart(canvas, {
     type: 'line',
     data: {
@@ -463,17 +500,36 @@ const h1leg = document.getElementById("c1-hero1-legend");
   });
 })();
 
-/* acquisition & devices bar charts */
-barChart("c1-bars1", [12, 18, 15, 22, 19, 25, 21], i => i % 2 ? CLR.greenDim : CLR.green, { h: 100 });
-const c1b1 = document.getElementById("c1-bars1-rows");
-[["Mon","New 12"],["Tue","New 18"],["Wed","Ret. 9"],["Thu","New 22"],["Fri","Ret. 14"],["Sat","New 21"]].forEach(([k, v]) => {
-  const r = document.createElement("div"); r.className = "mini-row"; r.innerHTML = `<span class="k">${k}</span><span class="v mono">${v}</span>`; c1b1.appendChild(r);
+/* hero card 2 — LAI/MTVI2 vs. NDVI cross-check (doc: "NDVI saturation can
+   occur when LAI is high, so LAI/MTVI2 should support NDVI") */
+const c1h2 = document.getElementById("c1-hero2-rows");
+[["LAI (current)","4.8 m²/m²"],["MTVI2 (current)","0.61"],["NDVI cross-check","0.78 · saturated"],["Margin to alert","23% (vs. 15% drop)"]].forEach(([k, v]) => {
+  const r = document.createElement("div"); r.className = "mini-row";
+  r.innerHTML = `<span class="k">${k}</span><span class="v mono">${v}</span>`; c1h2.appendChild(r);
 });
 
-barChart("c1-bars2", [40, 30, 20, 10, 26, 33, 18], (i, v) => v > 28 ? CLR.blue : CLR.amber, { h: 100 });
-const c1b2 = document.getElementById("c1-bars2-rows");
-[["Desktop","40%"],["Mobile","30%"],["Tablet","20%"],["Other","10%"],["Kiosk","26%"],["TV","18%"]].forEach(([k, v]) => {
-  const r = document.createElement("div"); r.className = "mini-row"; r.innerHTML = `<span class="k">${k}</span><span class="v mono">${v}</span>`; c1b2.appendChild(r);
+/* Yield & Financial Trend — three Category C KPIs on one chart:
+   average 30-Day Yield Forecast and Green Leaf Yield Estimate (both
+   kg/ha) alongside Revenue at Risk (LKR). Raw units aren't comparable,
+   so all three are indexed to their OWN 12-week average = 100 (not to
+   a shared Week-1 point) — that keeps one readable axis without
+   forcing every line to launch from the same artificial starting dot. */
+const c1yWeeks = Array.from({ length: 12 }, (_, i) => "W" + (i + 1));
+const c1yRaw = {
+  "Avg. Yield Forecast (kg/ha)":       [206, 208, 207, 210, 209, 211, 210, 213, 212, 214, 215, 213],
+  "Green Leaf Yield Estimate (kg/ha)": [195, 197, 200, 202, 204, 206, 205, 208, 210, 209, 212, 214],
+  "Revenue at Risk (LKR)":             [7400, 7100, 6900, 6600, 6300, 6100, 5800, 5600, 5400, 5200, 5000, 4900],
+};
+const c1yColors = { "Avg. Yield Forecast (kg/ha)": "var(--green)", "Green Leaf Yield Estimate (kg/ha)": "var(--blue)", "Revenue at Risk (LKR)": "var(--amber)" };
+const c1yieldSeries = Object.entries(c1yRaw).map(([label, data]) => {
+  const base = data.reduce((a, b) => a + b, 0) / data.length;
+  return { label, color: c1yColors[label], data: data.map(v => Math.round((v / base) * 1000) / 10), raw: data };
+});
+multiLineChart("c1-yield-forecast", c1yieldSeries, c1yWeeks, { h: 160 });
+const c1yLegend = document.getElementById("c1-yield-forecast-legend");
+c1yieldSeries.forEach(s => {
+  const d = document.createElement("div"); d.className = "legend-item";
+  d.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}`; c1yLegend.appendChild(d);
 });
 
 /* ================================================================
