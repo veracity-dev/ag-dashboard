@@ -621,31 +621,59 @@ c1yieldSeries.forEach(s => {
 })();
 
 /* ================================================================
-   VIEW 2 — Environment
+   VIEW 2 — Input & Resources
+   Groups A-D per "Precision Agriculture Intelligence for Horana
+   Plantations": A Nutrient & Fertiliser, B Water & Irrigation,
+   C Crop Protection & Agrochemical, D Energy/Labour/Operational.
    ================================================================ */
-bannerWithOverlay("c2-hero", "alpine", "Site — Meridian Ridge", "18.4°C / 62% humidity", "Live feed");
+bannerWithOverlay("c2-hero", "forest", "Nitrogen Use Efficiency", "8.4 kg yield / kg N", "Group A");
 
-document.getElementById("c2-ring").appendChild(ringChart(72, CLR.green, 110, 10));
-centerLabel("c2-ring", "72", "AQI good");
+/* Water Use Efficiency (WUE) — kg made-tea / m3 water, vs. an estate benchmark of 3.5 */
+document.getElementById("c2-ring").appendChild(ringChart(91, CLR.green, 110, 10));
+centerLabel("c2-ring", "3.2", "kg/m³");
 
+/* quick-glance status — one headline stat per resource group */
 const c2icons = document.getElementById("c2-icons");
-[["Wind","12 km/h"],["UV","3 low"],["Pressure","1013 hPa"],["Visibility","9.5 km"],["Dew pt.","11°C"]].forEach(([l, v]) => {
+[["Fertiliser rate","142 kg/ha","var(--green)"],["Irrigation applied","38 m³/ha","var(--green)"],["Targeted spray area","34% of block","var(--amber)"],["Labour hours saved","126 hrs/ha","var(--green)"],["Drone flight hours","18 hrs this mo","var(--green)"]].forEach(([l, v, dot]) => {
   const c = document.createElement("div"); c.className = "icon-stat";
-  c.innerHTML = `<div class="icon-btn"><span class="dot" style="background:var(--green)"></span></div><div class="n mono">${v}</div><div class="l">${l}</div>`;
+  c.innerHTML = `<div class="icon-btn"><span class="dot" style="background:${dot}"></span></div><div class="n mono">${v}</div><div class="l">${l}</div>`;
   c2icons.appendChild(c);
 });
 
-lineChart("c2-a1", [40, 44, 41, 47, 50, 48, 53], CLR.blue,  { h: 90 });
-lineChart("c2-a2", [18, 20, 19, 22, 21, 24, 23], CLR.amber, { h: 90 });
-lineChart("c2-a3", [2,  0,  5,  8,  3,  1,  6],  CLR.green, { h: 90 });
-barChart("c2-bars", [98, 96, 91, 99, 88], () => CLR.green, { h: 100 });
-lineChart("c2-area2", [10, 18, 24, 30, 42, 55, 70, 88], CLR.green, { h: 100, dots: true });
+/* Fertiliser Cost Efficiency (FCE) — LKR per kg yield, trending down = improving */
+lineChart("c2-a1", [42, 41, 40, 39, 38, 37, 36, 35], CLR.green, { h: 90 });
 
-const c2list = document.getElementById("c2-list");
-[["Zone A","92%",CLR.green],["Zone B","81%",CLR.blue],["Zone C","74%",CLR.amber],["Zone D","63%",CLR.textFaint]].forEach(([n, v, c]) => {
+/* Irrigation Trigger Compliance — % of decisions image-supported, target >=80% */
+document.getElementById("c2-irrigation-ring").appendChild(ringChart(83, CLR.green, 90, 9));
+centerLabel("c2-irrigation-ring", "83%", "compliant");
+
+/* Agrochemical Use Reduction — blanket vs. targeted application, indexed */
+barChart("c2-bars", [100, 82], (i) => i === 0 ? CLR.textFaint : CLR.green, { h: 100, labels: ["Blanket", "Targeted"] });
+const c2barsRows = document.getElementById("c2-bars-rows");
+[["Reduction vs. baseline", "18%"], ["Target range", "10–20%"]].forEach(([k, v]) => {
+  const r = document.createElement("div"); r.className = "mini-row"; r.innerHTML = `<span class="k">${k}</span><span class="v mono">${v}</span>`; c2barsRows.appendChild(r);
+});
+
+/* Nitrogen deficiency by zone — target <5% */
+const c2ndef = document.getElementById("c2-ndef-zones");
+[["Zone A", "3%", CLR.green], ["Zone B", "6%", CLR.amber], ["Zone C", "8%", CLR.amber], ["Zone D", "4%", CLR.green]].forEach(([n, v, c]) => {
   const row = document.createElement("div"); row.className = "list-row";
   row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v};background:${c}"></span></span></span><span class="val mono">${v}</span>`;
-  c2list.appendChild(row);
+  c2ndef.appendChild(row);
+});
+
+/* Irrigation compliance by zone — target >=80% */
+const c2irr = document.getElementById("c2-irrigation-zones");
+[["Zone A", "88%", CLR.green], ["Zone B", "79%", CLR.amber], ["Zone C", "91%", CLR.green], ["Zone D", "68%", CLR.red]].forEach(([n, v, c]) => {
+  const row = document.createElement("div"); row.className = "list-row";
+  row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v};background:${c}"></span></span></span><span class="val mono">${v}</span>`;
+  c2irr.appendChild(row);
+});
+
+/* Drone operations (Group D) — Monitoring Coverage Efficiency + Drone Flight Hours */
+const c2drone = document.getElementById("c2-drone-rows");
+[["Coverage / flight", "38 ha"], ["Flight hours (month)", "18 hrs"], ["Flights completed", "6"], ["Fuel/energy use", "4.2 L/ha"]].forEach(([k, v]) => {
+  const r = document.createElement("div"); r.className = "mini-row"; r.innerHTML = `<span class="k">${k}</span><span class="v mono">${v}</span>`; c2drone.appendChild(r);
 });
 
 /* ================================================================
