@@ -13,7 +13,7 @@
       </div>
     </div>
     <nav class="tabs" id="tabs">
-      <button class="tab-btn active" data-view="v1" title="Health"><span class="tdot"></span><span class="tab-label">Health &amp; Diseases</span></button>
+      <button class="tab-btn active" data-view="v1" title="Health"><span class="tdot"></span><span class="tab-label">Health &amp; Yield</span></button>
       <button class="tab-btn" data-view="v2" title="Input"><span class="tdot"></span><span class="tab-label">Input &amp; Resources</span></button>
       <button class="tab-btn" data-view="v3" title="Yield"><span class="tdot"></span><span class="tab-label">Yield &amp; Financial</span></button>
       <button class="tab-btn" data-view="v4" title="Soil"><span class="tdot"></span><span class="tab-label">Soil Health</span></button>
@@ -38,9 +38,9 @@
   <div class="view active" id="v1">
     <div class="grid g-12">
       
-      <div id="yield-forcast" class="card span-6">
+      <div id="yield-forecast" class="card span-6">
         <div class="card-title">Yield &amp; Financial Trend</div>
-        <div class="card-sub">Indexed to each metric's 12-week average = 100</div>
+        <div class="card-sub">kg/ha (left axis) · Revenue at Risk, LKR M (right axis)</div>
         <div id="c1-yield-forecast"></div>
         <div class="legend" id="c1-yield-forecast-legend" style="margin-top:8px;"></div>
       </div>
@@ -65,7 +65,7 @@
               <span class="delta down">2 of 2 cycles</span>
             </div>
             <div>
-              <div class="card-title" style="color:rgba(238,242,245,.75);margin-bottom:3px;">Block C4</div>
+              <div class="card-title" style="color:rgba(238,242,245,.75);margin-bottom:3px;">Block 4NW</div>
               <div class="hero-photo-big">Immediate action required</div>
             </div>
           </div>
@@ -122,11 +122,43 @@
         </div>
       </div>
 
-      <div class="card span-6">
-        <div class="card-title">Block Health Score — distribution</div>
-        <div class="card-sub">87 monitored blocks · this week</div>
-        <div id="c1-violin"></div>
-        <div class="mini-rows" id="c1-violin-rows"></div>
+      <div id="block-health-distribution" class="card span-6">
+        <div class="card-title">Estate block map</div>
+        <div class="card-sub">Click a block · disease risk by zone</div>
+        <div class="terrace-wrap">
+          <div class="terrace-svg-wrap">
+            <svg id="terrace-svg" viewBox="0 0 420 460">
+              <rect x="0" y="0" width="420" height="460" fill="#16241b" />
+              <path d="M0,30 L100,10 L120,90 L20,150 L0,140 Z" fill="#1c3018" />
+              <rect x="20" y="20" width="55" height="35" fill="#3a4048" stroke="#26313d" stroke-width="1.5" />
+              <ellipse cx="100" cy="45" rx="26" ry="18" fill="#1c3530" stroke="#576270" stroke-width="2" />
+              <path d="M-10,120 C40,150 30,220 90,260" fill="none" stroke="#4f8a3a" stroke-width="6" opacity="0.5" />
+              <ellipse cx="255" cy="255" rx="200" ry="205" fill="#233c19" />
+              <g id="terrace-fills"></g>
+              <g fill="none" stroke="#eef2f5" stroke-width="1.5" opacity="0.35">
+                <circle cx="255" cy="255" r="40" />
+                <circle cx="255" cy="255" r="80" />
+                <circle cx="255" cy="255" r="120" />
+                <circle cx="255" cy="255" r="160" />
+                <circle cx="255" cy="255" r="200" />
+              </g>
+            </svg>
+          </div>
+          <div class="terrace-panel">
+            <div class="card-sub" style="margin:0 0 2px;">Selected block</div>
+            <div class="name" id="tm-name">Tap a block</div>
+            <div class="terrace-row"><span>Area</span><span id="tm-area">-</span></div>
+            <div class="terrace-row"><span>Avg NDVI</span><span id="tm-ndvi">-</span></div>
+            <div class="terrace-row"><span>Disease risk</span><span id="tm-risk">-</span></div>
+            <div class="terrace-row"><span>Dominant issue</span><span id="tm-issue">-</span></div>
+            <div class="terrace-row"><span>Last scan</span><span id="tm-scan">-</span></div>
+            <div class="terrace-legend">
+              <span class="terrace-swatch" style="background:var(--green)"></span>Target
+              <span class="terrace-swatch" style="background:var(--amber)"></span>Warning
+              <span class="terrace-swatch" style="background:var(--red)"></span>Critical
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>

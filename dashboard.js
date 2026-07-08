@@ -285,12 +285,24 @@ function kpiChart(id, scoreVals, riskVals, weekLabels, opts = {}) {
 }
 
 /* multi-series line chart — renders into div#id. `series` is
-   [{label, data, color}, …]; colors are assigned by the caller in a
-   fixed order (never auto-cycled) and rendered via an external HTML
+   [{label, data, color, axis}, …]; colors are assigned by the caller in
+   a fixed order (never auto-cycled) and rendered via an external HTML
    legend rather than Chart.js's built-in one, matching the rest of
-   the dashboard's legend treatment. */
+   the dashboard's legend treatment. Pass axis:'y1' on a series (plus
+   opts.dualAxis / opts.y1Label) to plot it against a right-hand scale
+   when its unit isn't comparable to the rest (e.g. LKR vs. kg/ha). */
 function multiLineChart(id, series, labels, opts = {}) {
   const canvas = mkCanvas(id, opts.h || 160);
+  const scales = {
+    x: { grid: { color: CLR.border + '60' }, ticks: { font: { size: 8.5 }, maxRotation: 0, color: CLR.textFaint } },
+    y: { position: 'left', grid: { color: CLR.border }, ticks: { font: { size: 8.5 }, color: CLR.textFaint },
+      title: opts.yLabel ? { display: true, text: opts.yLabel, font: { size: 9 }, color: CLR.textFaint } : undefined },
+  };
+  if (opts.dualAxis) {
+    scales.y1 = { position: 'right', grid: { display: false },
+      ticks: { font: { size: 8.5 }, color: CLR.textFaint, ...(opts.y1Suffix ? { callback: v => v + opts.y1Suffix } : {}) },
+      title: opts.y1Label ? { display: true, text: opts.y1Label, font: { size: 9 }, color: CLR.textFaint } : undefined };
+  }
   return new Chart(canvas, {
     type: 'line',
     data: {
@@ -308,6 +320,7 @@ function multiLineChart(id, series, labels, opts = {}) {
         pointBorderColor: CLR.surface,
         pointBorderWidth: 1,
         borderWidth: 2,
+        yAxisID: s.axis || 'y',
       }))
     },
     options: {
@@ -320,10 +333,7 @@ function multiLineChart(id, series, labels, opts = {}) {
           titleColor: CLR.textDim, bodyColor: CLR.text, padding: 10,
         }
       },
-      scales: {
-        x: { grid: { color: CLR.border + '60' }, ticks: { font: { size: 8.5 }, maxRotation: 0, color: CLR.textFaint } },
-        y: { grid: { color: CLR.border }, ticks: { font: { size: 8.5 }, color: CLR.textFaint } }
-      }
+      scales
     }
   });
 }
@@ -430,7 +440,7 @@ const c1h1 = document.getElementById("c1-hero1-rows");
 
 groupedBarChart("c1-hero1-bars", ["W10","W11","W12","W13","W14"], [{ values:[78,81,80,82,84] }, { values:[70,67,62,56,50] }], [CLR.green, CLR.amber], { h: 106 });
 const h1leg = document.getElementById("c1-hero1-legend");
-[["Target", CLR.green], ["Block C4", CLR.amber]].forEach(([n, c]) => {
+[["Target", CLR.green], ["Block 4NW", CLR.amber]].forEach(([n, c]) => {
   const d = document.createElement("div"); d.className = "legend-item";
   d.innerHTML = `<span class="dot" style="background:${c}"></span>${n}`; h1leg.appendChild(d);
 });
@@ -509,28 +519,106 @@ const c1h2 = document.getElementById("c1-hero2-rows");
 });
 
 /* Yield & Financial Trend — three Category C KPIs on one chart:
-   average 30-Day Yield Forecast and Green Leaf Yield Estimate (both
-   kg/ha) alongside Revenue at Risk (LKR). Raw units aren't comparable,
-   so all three are indexed to their OWN 12-week average = 100 (not to
-   a shared Week-1 point) — that keeps one readable axis without
-   forcing every line to launch from the same artificial starting dot. */
+   average 30-Day Yield Forecast and Green Leaf Yield Estimate share the
+   left axis (both kg/ha); Revenue at Risk is a different unit (LKR) so
+   it plots against its own right-hand axis instead of being squashed
+   onto the kg/ha scale. */
 const c1yWeeks = Array.from({ length: 12 }, (_, i) => "W" + (i + 1));
-const c1yRaw = {
-  "Avg. Yield Forecast (kg/ha)":       [206, 208, 207, 210, 209, 211, 210, 213, 212, 214, 215, 213],
-  "Green Leaf Yield Estimate (kg/ha)": [195, 197, 200, 202, 204, 206, 205, 208, 210, 209, 212, 214],
-  "Revenue at Risk (LKR)":             [7400, 7100, 6900, 6600, 6300, 6100, 5800, 5600, 5400, 5200, 5000, 4900],
-};
-const c1yColors = { "Avg. Yield Forecast (kg/ha)": "var(--green)", "Green Leaf Yield Estimate (kg/ha)": "var(--blue)", "Revenue at Risk (LKR)": "var(--amber)" };
-const c1yieldSeries = Object.entries(c1yRaw).map(([label, data]) => {
-  const base = data.reduce((a, b) => a + b, 0) / data.length;
-  return { label, color: c1yColors[label], data: data.map(v => Math.round((v / base) * 1000) / 10), raw: data };
-});
-multiLineChart("c1-yield-forecast", c1yieldSeries, c1yWeeks, { h: 160 });
+const c1yieldSeries = [
+  { label: "Avg. Yield Forecast (kg/ha)",       color: "var(--green)", axis: "y",  data: [2050, 2080, 2070, 2110, 2140, 2160, 2180, 2210, 2240, 2260, 2290, 2320] },
+  { label: "Green Leaf Yield Estimate (kg/ha)", color: "var(--blue)",  axis: "y",  data: [2000, 2030, 2060, 2090, 2100, 2130, 2150, 2170, 2200, 2220, 2250, 2280] },
+  { label: "Revenue at Risk (LKR M)",           color: "var(--amber)", axis: "y1", data: [15.2, 14.5, 13.9, 13.2, 12.6, 12.0, 11.4, 10.9, 10.4, 10.0, 9.7, 9.5] },
+];
+multiLineChart("c1-yield-forecast", c1yieldSeries, c1yWeeks, { h: 160, dualAxis: true, yLabel: "kg/ha", y1Label: "LKR M", y1Suffix: 'M' });
 const c1yLegend = document.getElementById("c1-yield-forecast-legend");
 c1yieldSeries.forEach(s => {
   const d = document.createElement("div"); d.className = "legend-item";
   d.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}`; c1yLegend.appendChild(d);
 });
+
+/* Estate block map — a concentric ring/sector diagram (5 rings × 4
+   quadrants = 20 blocks) standing in for a geographic layout, colored
+   by Disease Risk Score using the same target/warning/critical bands
+   as the Block Health Score chart (<20% / 20–50% / ≥50%). Click a
+   block to inspect it; adapted from a reference SVG mock into the
+   dashboard's dark theme and KPI vocabulary. */
+(function () {
+  const svgNS = "http://www.w3.org/2000/svg";
+  const cx = 255, cy = 255;
+  const radii = [0, 40, 80, 120, 160, 200];
+  const sectors = 4;
+  const quadrantNames = ["NE", "SE", "SW", "NW"];
+
+  function riskColor(risk) {
+    if (risk >= 50) return CLR.red;
+    if (risk >= 20) return CLR.amber;
+    return CLR.green;
+  }
+  function riskIssue(risk) {
+    if (risk >= 50) return "Blister blight";
+    if (risk >= 30) return "Red rust";
+    return "None significant";
+  }
+
+  const riskPool = [12, 18, 24, 31, 38, 45, 52, 60];
+  const blocks = [];
+  for (let ring = 0; ring < radii.length - 1; ring++) {
+    for (let s = 0; s < sectors; s++) {
+      const risk = riskPool[(ring * sectors + s) % riskPool.length];
+      blocks.push({
+        name: `Block ${ring + 1}${quadrantNames[s]}`,
+        area: (1.2 + ring * 0.4).toFixed(1) + " ha",
+        ndvi: (0.78 - risk * 0.006).toFixed(2),
+        risk: risk + "%",
+        issue: riskIssue(risk),
+        scan: (1 + ((ring + s) % 3)) + "d ago",
+        color: riskColor(risk),
+      });
+    }
+  }
+
+  const polar = (r, angle) => [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
+  const fillsGroup = document.getElementById("terrace-fills");
+  let idx = 0;
+  for (let ring = 0; ring < radii.length - 1; ring++) {
+    const r0 = radii[ring], r1 = radii[ring + 1];
+    for (let s = 0; s < sectors; s++) {
+      const a0 = (s / sectors) * Math.PI * 2 - Math.PI / 2;
+      const a1 = ((s + 1) / sectors) * Math.PI * 2 - Math.PI / 2;
+      const [x0, y0] = polar(r1, a0);
+      const [x1, y1] = polar(r1, a1);
+      const [x2, y2] = polar(r0, a1);
+      const [x3, y3] = polar(r0, a0);
+      const d = r0 === 0
+        ? `M${cx},${cy} L${x0.toFixed(1)},${y0.toFixed(1)} A${r1},${r1} 0 0,1 ${x1.toFixed(1)},${y1.toFixed(1)} Z`
+        : `M${x0.toFixed(1)},${y0.toFixed(1)} A${r1},${r1} 0 0,1 ${x1.toFixed(1)},${y1.toFixed(1)} L${x2.toFixed(1)},${y2.toFixed(1)} A${r0},${r0} 0 0,0 ${x3.toFixed(1)},${y3.toFixed(1)} Z`;
+      const path = document.createElementNS(svgNS, "path");
+      path.setAttribute("d", d);
+      path.setAttribute("fill", blocks[idx].color);
+      path.setAttribute("fill-opacity", "0.6");
+      path.setAttribute("stroke", CLR.surface);
+      path.setAttribute("stroke-width", "1");
+      path.style.cursor = "pointer";
+      path.dataset.idx = idx;
+      fillsGroup.appendChild(path);
+      idx++;
+    }
+  }
+
+  const fields = { name: "tm-name", area: "tm-area", ndvi: "tm-ndvi", risk: "tm-risk", issue: "tm-issue", scan: "tm-scan" };
+  const regions = fillsGroup.querySelectorAll("path");
+  regions.forEach(region => {
+    region.addEventListener("click", () => {
+      regions.forEach(p => { p.setAttribute("stroke-width", "1"); p.setAttribute("stroke", CLR.surface); });
+      region.setAttribute("stroke-width", "2.5");
+      region.setAttribute("stroke", CLR.text);
+      const b = blocks[region.dataset.idx];
+      Object.entries(fields).forEach(([key, id]) => { document.getElementById(id).textContent = b[key]; });
+    });
+    region.addEventListener("mouseenter", () => region.setAttribute("fill-opacity", "0.85"));
+    region.addEventListener("mouseleave", () => region.setAttribute("fill-opacity", "0.6"));
+  });
+})();
 
 /* ================================================================
    VIEW 2 — Environment

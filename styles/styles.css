@@ -199,6 +199,17 @@ svg text{ font-family: ui-monospace,"SF Mono","Cascadia Mono",monospace; }
 .mini-row .k{ color:var(--text-faint); }
 .mini-row .v{ font-weight:600; }
 
+/* ---- estate block map (concentric ring/sector terrace diagram) ---- */
+.terrace-wrap{ display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap; margin-top:10px; }
+.terrace-svg-wrap{ flex:1 1 220px; min-width:190px; }
+.terrace-svg-wrap svg{ width:100%; height:auto; display:block; }
+.terrace-panel{ flex:1 1 170px; min-width:160px; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+.terrace-panel .name{ font-size:15px; font-weight:700; margin:2px 0 10px; }
+.terrace-row{ display:flex; justify-content:space-between; gap:8px; font-size:11.5px; margin-bottom:8px; color:var(--text-dim); }
+.terrace-row span:last-child{ font-weight:700; color:var(--text); }
+.terrace-legend{ border-top:1px solid var(--border); margin-top:10px; padding-top:8px; display:flex; align-items:center; gap:6px; font-size:10px; color:var(--text-faint); flex-wrap:wrap; }
+.terrace-swatch{ width:8px; height:8px; border-radius:2px; display:inline-block; flex:none; }
+
 @media (max-width:1180px){
   .g-12 > [class*="span-"]{ grid-column: span 6; }
 }
