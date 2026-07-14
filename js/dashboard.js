@@ -148,8 +148,16 @@ function groupedBarChart(id, groups, series, colors, opts = {}) {
   });
 }
 
+/* shared dark-theme tooltip style used by ring/pie hover states */
+const HOVER_TOOLTIP = {
+  enabled: true,
+  backgroundColor: CLR.surface2, borderColor: CLR.border, borderWidth: 1,
+  titleColor: CLR.textDim, bodyColor: CLR.text, padding: 9, displayColors: true,
+  boxPadding: 3,
+};
+
 /* ring / doughnut — returns a canvas node (caller appends it) */
-function ringChart(pct, color, size = 90, stroke = 9, track) {
+function ringChart(pct, color, size = 90, stroke = 9, track, opts = {}) {
   const col = rc(color);
   const canvas = document.createElement('canvas');
   canvas.width  = size * 2;  /* 2× for retina sharpness */
@@ -157,45 +165,66 @@ function ringChart(pct, color, size = 90, stroke = 9, track) {
   canvas.style.width  = size + 'px';
   canvas.style.height = size + 'px';
   const cutout = Math.round((1 - (stroke * 2) / size) * 100) + '%';
+  const valueLabel = opts.label || 'Value';
   new Chart(canvas, {
     type: 'doughnut',
     data: {
+      labels: [valueLabel, 'Remaining'],
       datasets: [{
         data: [pct, 100 - pct],
         backgroundColor: [col, track || CLR.surface3],
         borderWidth: 0,
-        hoverOffset: 0,
+        hoverOffset: 6,
       }]
     },
     options: {
       responsive: false, cutout,
-      plugins: { legend: { display: false }, tooltip: { enabled: false } }
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          ...HOVER_TOOLTIP,
+          callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed}%` }
+        }
+      }
     }
   });
   return canvas;
 }
 
-/* pie / doughnut — returns a canvas node */
+/* pie / doughnut — returns a canvas node. segments: [{v, color, label}] */
 function pieChart(segments, size = 110) {
   const canvas = document.createElement('canvas');
   canvas.width  = size * 2;
   canvas.height = size * 2;
   canvas.style.width  = size + 'px';
   canvas.style.height = size + 'px';
+  const total = segments.reduce((a, s) => a + s.v, 0);
   new Chart(canvas, {
     type: 'doughnut',
     data: {
+      labels: segments.map(s => s.label || ''),
       datasets: [{
         data: segments.map(s => s.v),
         backgroundColor: segments.map(s => rc(s.color)),
         borderWidth: 2,
         borderColor: CLR.surface,
-        hoverOffset: 0,
+        hoverOffset: 6,
       }]
     },
     options: {
       responsive: false, cutout: '45%',
-      plugins: { legend: { display: false }, tooltip: { enabled: false } }
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          ...HOVER_TOOLTIP,
+          callbacks: {
+            label: ctx => {
+              const pct = Math.round(ctx.parsed / total * 100);
+              return `${ctx.label ? ctx.label + ': ' : ''}${ctx.parsed} (${pct}%)`;
+            }
+          }
+        }
+      }
     }
   });
   return canvas;
@@ -622,20 +651,45 @@ c1yieldSeries.forEach(s => {
   });
 })();
 
-/* Two blocks spotlighted against their yield baseline — moved here from
-   the old Finance tab since Health & Yield is where yield content lives. */
-bannerWithOverlay("c4-banner1", "alpine", "Block 5NE", "Yield +4.2% vs baseline", "Above target");
-bannerWithOverlay("c4-banner2", "dusk",   "Block 2NW", "Yield -1.8% vs baseline", "Below target");
+/* Yield history — actual monthly green-leaf yield, this season vs. last
+   season (kg/ha), replacing the old Block 2NW spotlight banner. */
+const c1yhMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const c1yieldHistorySeries = [
+  { label: "This season (kg/ha)", color: "var(--green)", data: [1650, 1700, 1780, 1900, 2050, 2150, 2200, 2180, 2100, 1980, 1850, 1820] },
+  { label: "Last season (kg/ha)",  color: "var(--text-faint)", data: [1580, 1620, 1690, 1810, 1960, 2050, 2100, 2080, 2010, 1900, 1780, 1750] },
+];
+multiLineChart("c1-yield-history", c1yieldHistorySeries, c1yhMonths, { h: 160, yLabel: "kg/ha" });
+const c1yhLegend = document.getElementById("c1-yield-history-legend");
+c1yieldHistorySeries.forEach(s => {
+  const d = document.createElement("div"); d.className = "legend-item";
+  d.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}`; c1yhLegend.appendChild(d);
+});
 
-mount("c4-pie", pieChart([{ v:34,color:CLR.green },{ v:22,color:CLR.blue },{ v:28,color:CLR.amber },{ v:16,color:CLR.red }]));
+mount("c4-pie", pieChart([{ v:34,color:CLR.green,label:"Fertilizer" },{ v:22,color:CLR.blue,label:"Pesticide" },{ v:28,color:CLR.amber,label:"Irrigation" },{ v:16,color:CLR.red,label:"Labor" }]));
 const pieLegend = document.getElementById("c4-pie-legend");
 [["Fertilizer",CLR.green],["Pesticide",CLR.blue],["Irrigation",CLR.amber],["Labor",CLR.red]].forEach(([n, c]) => {
   const d = document.createElement("div"); d.className = "legend-item";
   d.innerHTML = `<span class="dot" style="background:${c}"></span>${n}`; pieLegend.appendChild(d);
 });
 
-document.getElementById("c4-ring1").appendChild(ringChart(64, CLR.green, 100, 10)); centerLabel("c4-ring1", "$6,840", "saved / qtr");
-mount("c4-pie2", pieChart([{ v:45,color:CLR.green },{ v:35,color:CLR.surface3 },{ v:20,color:CLR.red }], 90));
+document.getElementById("c4-ring1").appendChild(ringChart(64, CLR.green, 100, 10, null, { label: "Saved" })); centerLabel("c4-ring1", "$6,840", "saved / qtr");
+mount("c4-pie2", pieChart([{ v:45,color:CLR.green,label:"Above baseline" },{ v:35,color:CLR.surface3,label:"At baseline" },{ v:20,color:CLR.red,label:"Below baseline" }], 90));
+
+/* Input cost savings — trend over time, by category (same categories/
+   colors as the "Input cost savings by category" pie above) */
+const c4costMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"];
+const c4costSeries = [
+  { label: "Fertilizer", color: "var(--green)", data: [200, 230, 255, 275, 295, 310, 325, 340] },
+  { label: "Pesticide",  color: "var(--blue)",  data: [130, 145, 160, 175, 190, 200, 210, 220] },
+  { label: "Irrigation", color: "var(--amber)", data: [160, 180, 200, 220, 240, 255, 270, 280] },
+  { label: "Labor",      color: "var(--red)",   data: [90, 100, 110, 120, 130, 140, 150, 160] },
+];
+multiLineChart("c4-cost-trend", c4costSeries, c4costMonths, { h: 160, yLabel: "LKR '000" });
+const c4costLegend = document.getElementById("c4-cost-trend-legend");
+c4costSeries.forEach(s => {
+  const d = document.createElement("div"); d.className = "legend-item";
+  d.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}`; c4costLegend.appendChild(d);
+});
 
 /* ================================================================
    VIEW 2 — Input & Resources
@@ -646,7 +700,7 @@ mount("c4-pie2", pieChart([{ v:45,color:CLR.green },{ v:35,color:CLR.surface3 },
 bannerWithOverlay("c2-hero", "forest", "Nitrogen Use Efficiency", "8.4 kg yield / kg N", "Group A");
 
 /* Water Use Efficiency (WUE) — kg made-tea / m3 water, vs. an estate benchmark of 3.5 */
-document.getElementById("c2-ring").appendChild(ringChart(91, CLR.green, 110, 10));
+document.getElementById("c2-ring").appendChild(ringChart(91, CLR.green, 110, 10, null, { label: "WUE" }));
 centerLabel("c2-ring", "3.2", "kg/m³");
 
 /* quick-glance status — one headline stat per resource group */
@@ -661,7 +715,7 @@ const c2icons = document.getElementById("c2-icons");
 lineChart("c2-a1", [42, 41, 40, 39, 38, 37, 36, 35], CLR.green, { h: 90 });
 
 /* Irrigation Trigger Compliance — % of decisions image-supported, target >=80% */
-document.getElementById("c2-irrigation-ring").appendChild(ringChart(83, CLR.green, 90, 9));
+document.getElementById("c2-irrigation-ring").appendChild(ringChart(83, CLR.green, 90, 9, null, { label: "Compliant" }));
 centerLabel("c2-irrigation-ring", "83%", "compliant");
 
 /* Agrochemical Use Reduction — blanket vs. targeted application, indexed */
@@ -723,7 +777,7 @@ lineChart("c3-heat", [0.4, 0.6, 0.3, 0.8, 1.1, 0.9, 1.4, 1.2], CLR.amber, { h: 1
 bannerWithOverlay("c4-priority-banner", "dusk", "Block 4NW", "2 of 2 cycles — escalate", "High priority");
 
 /* AI Data Quality Score — target >85/100 */
-document.getElementById("c4-quality-ring").appendChild(ringChart(88, CLR.green, 110, 10));
+document.getElementById("c4-quality-ring").appendChild(ringChart(88, CLR.green, 110, 10, null, { label: "Quality score" }));
 centerLabel("c4-quality-ring", "88", "quality score");
 
 /* quick AI-ops status strip */
@@ -735,7 +789,7 @@ const c4icons = document.getElementById("c4-icons");
 });
 
 /* Yield Prediction Confidence — target >=80% */
-document.getElementById("c4-ring2").appendChild(ringChart(83, CLR.blue, 100, 10)); centerLabel("c4-ring2", "83%", "confidence");
+document.getElementById("c4-ring2").appendChild(ringChart(83, CLR.blue, 100, 10, null, { label: "Confidence" })); centerLabel("c4-ring2", "83%", "confidence");
 
 /* 14-Day Disease Risk Probability by block — target <20%, critical >=50% */
 const c4risk = document.getElementById("c4-disease-risk");
