@@ -412,6 +412,8 @@ const c1tiles = document.getElementById("c1-overview-tiles");
   ["Tea blocks monitored", "87", "Active", "up"],
   ["Average bush health", "91%", "Good", "up"],
   ["Monthly green leaf forecast", "1,820 t", "+6% vs last month", "up"],
+  ["Revenue protected", "$18,420", "▲ 6.1%", "up"],
+  ["ROI of precision program", "27.4%", "▲ 1.1 pts", "up"],
 ].forEach(([l, n, badge, tone]) => {
   const tile = document.createElement("div"); tile.className = "stat-tile";
   tile.innerHTML = `<span class="l">${l}</span><span class="n mono">${n}</span><span class="delta ${tone}">${badge}</span>`;
@@ -620,6 +622,21 @@ c1yieldSeries.forEach(s => {
   });
 })();
 
+/* Two blocks spotlighted against their yield baseline — moved here from
+   the old Finance tab since Health & Yield is where yield content lives. */
+bannerWithOverlay("c4-banner1", "alpine", "Block 5NE", "Yield +4.2% vs baseline", "Above target");
+bannerWithOverlay("c4-banner2", "dusk",   "Block 2NW", "Yield -1.8% vs baseline", "Below target");
+
+mount("c4-pie", pieChart([{ v:34,color:CLR.green },{ v:22,color:CLR.blue },{ v:28,color:CLR.amber },{ v:16,color:CLR.red }]));
+const pieLegend = document.getElementById("c4-pie-legend");
+[["Fertilizer",CLR.green],["Pesticide",CLR.blue],["Irrigation",CLR.amber],["Labor",CLR.red]].forEach(([n, c]) => {
+  const d = document.createElement("div"); d.className = "legend-item";
+  d.innerHTML = `<span class="dot" style="background:${c}"></span>${n}`; pieLegend.appendChild(d);
+});
+
+document.getElementById("c4-ring1").appendChild(ringChart(64, CLR.green, 100, 10)); centerLabel("c4-ring1", "$6,840", "saved / qtr");
+mount("c4-pie2", pieChart([{ v:45,color:CLR.green },{ v:35,color:CLR.surface3 },{ v:20,color:CLR.red }], 90));
+
 /* ================================================================
    VIEW 2 — Input & Resources
    Groups A-D per "Precision Agriculture Intelligence for Horana
@@ -654,17 +671,20 @@ const c2barsRows = document.getElementById("c2-bars-rows");
   const r = document.createElement("div"); r.className = "mini-row"; r.innerHTML = `<span class="k">${k}</span><span class="v mono">${v}</span>`; c2barsRows.appendChild(r);
 });
 
-/* Nitrogen deficiency by zone — target <5% */
+/* Nitrogen deficiency by block — target <5%. Block 4NW (the block flagged
+   in the priority-alert card on Health & Yield) is kept as the worst
+   performer here too, so the same block reads as a problem estate-wide
+   rather than each tab inventing its own "zone" identity. */
 const c2ndef = document.getElementById("c2-ndef-zones");
-[["Zone A", "3%", CLR.green], ["Zone B", "6%", CLR.amber], ["Zone C", "8%", CLR.amber], ["Zone D", "4%", CLR.green]].forEach(([n, v, c]) => {
+[["Block 1NE", "3%", CLR.green], ["Block 2SE", "4%", CLR.green], ["Block 3SW", "6%", CLR.amber], ["Block 4NW", "9%", CLR.red]].forEach(([n, v, c]) => {
   const row = document.createElement("div"); row.className = "list-row";
   row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v};background:${c}"></span></span></span><span class="val mono">${v}</span>`;
   c2ndef.appendChild(row);
 });
 
-/* Irrigation compliance by zone — target >=80% */
+/* Irrigation compliance by block — target >=80% */
 const c2irr = document.getElementById("c2-irrigation-zones");
-[["Zone A", "88%", CLR.green], ["Zone B", "79%", CLR.amber], ["Zone C", "91%", CLR.green], ["Zone D", "68%", CLR.red]].forEach(([n, v, c]) => {
+[["Block 1NE", "88%", CLR.green], ["Block 2SE", "91%", CLR.green], ["Block 3SW", "79%", CLR.amber], ["Block 4NW", "68%", CLR.red]].forEach(([n, v, c]) => {
   const row = document.createElement("div"); row.className = "list-row";
   row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v};background:${c}"></span></span></span><span class="val mono">${v}</span>`;
   c2irr.appendChild(row);
@@ -677,69 +697,72 @@ const c2drone = document.getElementById("c2-drone-rows");
 });
 
 /* ================================================================
-   VIEW 3 — Team
+   VIEW 3 — Soil Health (Category D: 5 KPIs)
    ================================================================ */
-bannerWithOverlay("c3-banner", "autumn", "Monitoring cycle 24", "Day 3 of 5", "On track");
+bannerWithOverlay("c3-banner", "alpine", "Soil Moisture Status", "0.24 NDMI", "Above target");
 
+/* Soil Moisture (NDMI) by block — target >0.20, warning 0.10-0.20, critical <0.10 */
 const c3t = document.getElementById("c3-tickets");
-[["A. Novak","12"],["R. Diaz","9"],["S. Coates","7"],["M. Iyer","6"],["J. Park","3"]].forEach(([n, v]) => {
+[["Block 1NE", 0.26, CLR.green], ["Block 2SE", 0.22, CLR.green], ["Block 3SW", 0.18, CLR.amber], ["Block 4NW", 0.09, CLR.red]].forEach(([n, v, c]) => {
+  const width = Math.min(100, Math.round((v / 0.3) * 100));
   const row = document.createElement("div"); row.className = "list-row";
-  row.innerHTML = `<span class="thumb" style="background:linear-gradient(135deg,var(--surface-3),var(--surface-2));"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v * 7}%;background:var(--green)"></span></span></span><span class="val mono">${v}</span>`;
+  row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${width}%;background:${c}"></span></span></span><span class="val mono">${v.toFixed(2)}</span>`;
   c3t.appendChild(row);
 });
 
-const c3rings = document.getElementById("c3-rings");
-[["Scouting",84,CLR.green],["Irrigation",67,CLR.blue],["Spraying",91,CLR.amber],["Harvest",58,CLR.red]].forEach(([n, pct, color]) => {
-  const wrap = document.createElement("div"); wrap.className = "span-3";
-  wrap.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:6px;";
-  const ringHost = document.createElement("div"); ringHost.className = "ring-wrap"; ringHost.style.position = "relative";
-  ringHost.appendChild(ringChart(pct, color, 66, 7));
-  const lab = document.createElement("div"); lab.className = "ring-center";
-  lab.innerHTML = `<span class="n mono" style="font-size:13px;">${pct}%</span>`;
-  ringHost.appendChild(lab);
-  wrap.appendChild(ringHost); c3rings.appendChild(wrap);
-  const cap = document.createElement("div"); cap.className = "l"; cap.style.cssText = "font-size:10.5px;color:var(--text-faint);";
-  cap.textContent = n; wrap.appendChild(cap);
-});
+/* Surface Heat Stress — LST anomaly vs. seasonal baseline (relative, not a fixed target) */
+lineChart("c3-heat", [0.4, 0.6, 0.3, 0.8, 1.1, 0.9, 1.4, 1.2], CLR.amber, { h: 100 });
 
 /* ================================================================
-   VIEW 4 — Finance
+   VIEW 4 — Predictive AI (Category E: 5 KPIs)
+   Reuses the Block <ring><compass> identity from the Estate block map
+   and the Drone/Sentinel-2/Landsat/AI Fusion imagery-source identities
+   from Health & Yield's "Imagery sources" widget, so this tab reads as
+   the AI layer behind those alerts rather than a disconnected page.
    ================================================================ */
-bannerWithOverlay("c4-banner1", "alpine", "Nuwara block — Highland", "Yield +4.2% vs baseline", "Above target");
-bannerWithOverlay("c4-banner2", "dusk",   "Dimbula block — Lowland", "Yield -1.8% vs baseline", "Below target");
+bannerWithOverlay("c4-priority-banner", "dusk", "Block 4NW", "2 of 2 cycles — escalate", "High priority");
 
-mount("c4-pie", pieChart([{ v:34,color:CLR.green },{ v:22,color:CLR.blue },{ v:28,color:CLR.amber },{ v:16,color:CLR.red }]));
-const pieLegend = document.getElementById("c4-pie-legend");
-[["Fertilizer",CLR.green],["Pesticide",CLR.blue],["Irrigation",CLR.amber],["Labor",CLR.red]].forEach(([n, c]) => {
-  const d = document.createElement("div"); d.className = "legend-item";
-  d.innerHTML = `<span class="dot" style="background:${c}"></span>${n}`; pieLegend.appendChild(d);
+/* AI Data Quality Score — target >85/100 */
+document.getElementById("c4-quality-ring").appendChild(ringChart(88, CLR.green, 110, 10));
+centerLabel("c4-quality-ring", "88", "quality score");
+
+/* quick AI-ops status strip */
+const c4icons = document.getElementById("c4-icons");
+[["Model confidence","84%","var(--green)"],["Blocks at high priority","3","var(--amber)"],["Cloud-contaminated scenes","2","var(--amber)"],["Avg forecast error","9.4%","var(--green)"],["Recs this cycle","14","var(--green)"]].forEach(([l, v, dot]) => {
+  const c = document.createElement("div"); c.className = "icon-stat";
+  c.innerHTML = `<div class="icon-btn"><span class="dot" style="background:${dot}"></span></div><div class="n mono">${v}</div><div class="l">${l}</div>`;
+  c4icons.appendChild(c);
 });
 
-document.getElementById("c4-ring1").appendChild(ringChart(64, CLR.green, 100, 10)); centerLabel("c4-ring1", "$6,840", "saved / qtr");
-document.getElementById("c4-ring2").appendChild(ringChart(83, CLR.blue,  100, 10)); centerLabel("c4-ring2", "83%",    "confidence");
+/* Yield Prediction Confidence — target >=80% */
+document.getElementById("c4-ring2").appendChild(ringChart(83, CLR.blue, 100, 10)); centerLabel("c4-ring2", "83%", "confidence");
 
-mount("c4-pie2", pieChart([{ v:45,color:CLR.green },{ v:35,color:CLR.surface3 },{ v:20,color:CLR.red }], 90));
-mount("c4-pie3", pieChart([{ v:72,color:CLR.green },{ v:28,color:CLR.amber }], 90));
+/* 14-Day Disease Risk Probability by block — target <20%, critical >=50% */
+const c4risk = document.getElementById("c4-disease-risk");
+[["Block 1NE", "12%", CLR.green], ["Block 2SE", "18%", CLR.green], ["Block 3SW", "34%", CLR.amber], ["Block 4NW", "58%", CLR.red]].forEach(([n, v, c]) => {
+  const row = document.createElement("div"); row.className = "list-row";
+  row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v};background:${c}"></span></span></span><span class="val mono">${v}</span>`;
+  c4risk.appendChild(row);
+});
 
-/* 30-day yield forecast vs actual */
-(function () {
-  const canvas = mkCanvas("c4-dual", 140);
-  new Chart(canvas, {
-    type: 'line',
-    data: {
-      labels: Array.from({ length: 12 }, (_, i) => `P${i + 1}`),
-      datasets: [
-        { label:'Forecast', data:[62,65,67,70,72,74,76,78,80,82,85,88], borderColor:CLR.green, backgroundColor:'transparent', fill:false, tension:0, pointRadius:2, pointBackgroundColor:CLR.green, borderWidth:2.5 },
-        { label:'Actual',   data:[56,60,61,64,68,68,70,74,74,78,79,84], borderColor:CLR.amber, backgroundColor:'transparent', fill:false, tension:0, pointRadius:2, pointBackgroundColor:CLR.amber, borderWidth:2.5 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: { font: { size: 9 }, color: CLR.textFaint } },
-        y: { display: false }
-      }
-    }
-  });
-})();
+/* Fertiliser Recommendation Accuracy — improving cycle over cycle */
+lineChart("c4-fert-accuracy", [68, 71, 70, 74, 76, 75, 79, 81], CLR.green, { h: 90 });
+
+/* Block Priority Score — ranks blocks needing attention; Block 4NW is the
+   same block already flagged in Health & Yield's priority-alert card */
+const c4priority = document.getElementById("c4-priority-list");
+[["Block 4NW · 2 of 2 cycles", "92", CLR.red], ["Block 3SW", "61", CLR.amber], ["Block 2SE", "34", CLR.green], ["Block 1NE", "18", CLR.green]].forEach(([n, v, c]) => {
+  const row = document.createElement("div"); row.className = "list-row";
+  row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v}%;background:${c}"></span></span></span><span class="val mono">${v}</span>`;
+  c4priority.appendChild(row);
+});
+
+/* AI Data Quality by source — same imagery sources as the Health tab;
+   Landsat is the one already shown stale there, and it's dragging the
+   quality score down here too */
+const c4quality = document.getElementById("c4-quality-sources");
+[["Drone", "96", CLR.green], ["Sentinel-2", "94", CLR.green], ["Landsat", "71", CLR.amber], ["AI Fusion", "90", CLR.green]].forEach(([n, v, c]) => {
+  const row = document.createElement("div"); row.className = "list-row";
+  row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v}%;background:${c}"></span></span></span><span class="val mono">${v}</span>`;
+  c4quality.appendChild(row);
+});

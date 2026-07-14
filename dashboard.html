@@ -15,8 +15,8 @@
     <nav class="tabs" id="tabs">
       <button class="tab-btn active" data-view="v1" title="Health"><span class="tdot"></span><span class="tab-label">Health &amp; Yield</span></button>
       <button class="tab-btn" data-view="v2" title="Input"><span class="tdot"></span><span class="tab-label">Input &amp; Resources</span></button>
-      <button class="tab-btn" data-view="v3" title="Yield"><span class="tdot"></span><span class="tab-label">Yield &amp; Financial</span></button>
-      <button class="tab-btn" data-view="v4" title="Soil"><span class="tdot"></span><span class="tab-label">Soil Health</span></button>
+      <button class="tab-btn" data-view="v3" title="Yield"><span class="tdot"></span><span class="tab-label">Soil Health</span></button>
+      <button class="tab-btn" data-view="v4" title="Soil"><span class="tdot"></span><span class="tab-label">Predictive AI</span></button>
     </nav>
     <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -124,7 +124,7 @@
 
       <div id="block-health-distribution" class="card span-6">
         <div class="card-title">Estate block map</div>
-        <div class="card-sub">Click a block · disease risk by zone</div>
+        <div class="card-sub">Click a block · disease risk by block</div>
         <div class="terrace-wrap">
           <div class="terrace-svg-wrap">
             <svg id="terrace-svg" viewBox="0 0 420 460">
@@ -161,6 +161,23 @@
         </div>
       </div>
 
+      <div class="banner span-6" style="aspect-ratio:16/9;" id="c4-banner1"></div>
+      <div class="banner span-6" style="aspect-ratio:16/9;" id="c4-banner2"></div>
+
+      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center;">
+        <div class="card-title" style="align-self:flex-start;">Input cost savings by category</div>
+        <div id="c4-pie" style="margin-top:6px;"></div>
+        <div class="legend" style="margin-top:10px; justify-content:center;" id="c4-pie-legend"></div>
+      </div>
+      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <div class="card-title" style="align-self:flex-start;">Input cost savings</div>
+        <div class="ring-wrap" id="c4-ring1" style="margin-top:6px;"></div>
+      </div>
+      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <div class="card-title" style="align-self:flex-start;">Blocks vs. yield baseline</div>
+        <div id="c4-pie2" style="margin-top:6px;"></div>
+      </div>
+
     </div>
   </div>
 
@@ -195,12 +212,12 @@
       </div>
 
       <div class="card span-4">
-        <div class="card-title">Nitrogen deficiency by zone</div>
+        <div class="card-title">Nitrogen deficiency by block</div>
         <div class="card-sub">Share of zone flagged · Group A</div>
         <div id="c2-ndef-zones"></div>
       </div>
       <div class="card span-4">
-        <div class="card-title">Irrigation compliance by zone</div>
+        <div class="card-title">Irrigation compliance by block</div>
         <div class="card-sub">Image-supported decisions · Group B</div>
         <div id="c2-irrigation-zones"></div>
       </div>
@@ -212,95 +229,89 @@
     </div>
   </div>
 
-  <!-- ======================= VIEW 3 — TEAM ======================= -->
+  <!-- ======================= VIEW 3 — SOIL HEALTH ======================= -->
   <div class="view" id="v3">
     <div class="grid g-12">
-
-      <div class="card span-12" style="display:flex; align-items:center; gap:14px;">
-        <div class="search-bar">
-          <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="6" cy="6" r="4.5" fill="none" stroke="currentColor" stroke-width="1.4"/><line x1="9.5" y1="9.5" x2="13" y2="13" stroke="currentColor" stroke-width="1.4"/></svg>
-          Search blocks, tasks, agronomists…
-        </div>
-        <div style="flex:1"></div>
-        <span class="delta up">6 field staff on estate</span>
-      </div>
 
       <div class="banner span-7" style="aspect-ratio:16/9;" id="c3-banner"></div>
 
       <div class="card span-5" style="display:flex; flex-direction:column; gap:10px; justify-content:center;">
         <div>
-          <div class="card-title">Open field tasks</div>
-          <div class="metric-value mono">23</div>
-          <span class="delta down">▼ 6 vs last week</span>
+          <div class="card-title">Erosion risk area</div>
+          <div class="metric-value mono">4.8% of estate</div>
+          <span class="delta up">Below 5% target</span>
         </div>
         <div style="height:1px; background:var(--border);"></div>
         <div>
-          <div class="card-title">Avg task turnaround</div>
-          <div class="metric-value mono">4h 12m</div>
-          <span class="delta up">▲ 18% faster</span>
+          <div class="card-title">Waterlogging risk area</div>
+          <div class="metric-value mono">2.1% of estate</div>
+          <span class="delta up">Low risk</span>
         </div>
       </div>
 
       <div class="card span-6">
-        <div class="card-title">Field tasks by agronomist</div>
-        <div class="card-sub">Monitoring cycle 24</div>
+        <div class="card-title">Soil moisture (NDMI) by block</div>
+        <div class="card-sub">Target &gt;0.20 · warning 0.10–0.20 · critical &lt;0.10</div>
         <div id="c3-tickets"></div>
       </div>
 
       <div class="card span-6">
-        <div class="card-title">Activity</div>
-        <div class="card-sub">Task completion by discipline</div>
-        <div class="grid g-12" style="gap:10px;" id="c3-rings"></div>
+        <div class="card-title">Surface heat stress</div>
+        <div class="card-sub">LST anomaly vs. seasonal baseline, °C</div>
+        <div id="c3-heat"></div>
       </div>
 
-      <div class="card span-3 swatch-card"><div class="card-title">Scouting</div><div class="swatch" style="background:linear-gradient(135deg,var(--green),var(--green-dim));"></div><div class="metric-value mono" style="font-size:15px;">18 tasks</div></div>
-      <div class="card span-3 swatch-card"><div class="card-title">Irrigation</div><div class="swatch" style="background:linear-gradient(135deg,var(--blue),#2c5877);"></div><div class="metric-value mono" style="font-size:15px;">9 tasks</div></div>
-      <div class="card span-3 swatch-card"><div class="card-title">Spraying</div><div class="swatch" style="background:linear-gradient(135deg,var(--amber),#8a651c);"></div><div class="metric-value mono" style="font-size:15px;">11 tasks</div></div>
-      <div class="card span-3 swatch-card"><div class="card-title">Harvest</div><div class="swatch" style="background:linear-gradient(135deg,var(--red),#7a352c);"></div><div class="metric-value mono" style="font-size:15px;">42 tasks</div></div>
+      <div class="span-12" style="margin-top:2px;">
+        <div class="card-sub" style="text-transform:uppercase; letter-spacing:.06em; font-size:10px; margin:0;">Soil vulnerability classification — share of estate area</div>
+      </div>
+
+      <div class="card span-3 swatch-card"><div class="card-title">Stable</div><div class="swatch" style="background:linear-gradient(135deg,var(--green),var(--green-dim));"></div><div class="metric-value mono" style="font-size:15px;">58% of area</div></div>
+      <div class="card span-3 swatch-card"><div class="card-title">Watch</div><div class="swatch" style="background:linear-gradient(135deg,var(--blue),#2c5877);"></div><div class="metric-value mono" style="font-size:15px;">26% of area</div></div>
+      <div class="card span-3 swatch-card"><div class="card-title">Degrading</div><div class="swatch" style="background:linear-gradient(135deg,var(--amber),#8a651c);"></div><div class="metric-value mono" style="font-size:15px;">12% of area</div></div>
+      <div class="card span-3 swatch-card"><div class="card-title">Critical</div><div class="swatch" style="background:linear-gradient(135deg,var(--red),#7a352c);"></div><div class="metric-value mono" style="font-size:15px;">4% of area</div></div>
     </div>
   </div>
 
-  <!-- ======================= VIEW 4 — FINANCE ======================= -->
+  <!-- ======================= VIEW 4 — Predictive AI (Category E: 5 KPIs) ======================= -->
   <div class="view" id="v4">
     <div class="grid g-12">
 
-      <div class="card span-4"><div class="card-title">Revenue protected</div><div class="metric-value mono">$18,420</div><span class="delta up">▲ 6.1%</span></div>
-      <div class="card span-4"><div class="card-title">Revenue at risk</div><div class="metric-value mono">$4,900</div><span class="delta down">▼ 2.4%</span></div>
-      <div class="card span-4"><div class="card-title">ROI of precision program</div><div class="metric-value mono">27.4%</div><span class="delta up">▲ 1.1 pts</span></div>
-
-      <div class="banner span-6" style="aspect-ratio:16/9;" id="c4-banner1"></div>
-      <div class="banner span-6" style="aspect-ratio:16/9;" id="c4-banner2"></div>
-
-      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center;">
-        <div class="card-title" style="align-self:flex-start;">Input cost savings by category</div>
-        <div id="c4-pie" style="margin-top:6px;"></div>
-        <div class="legend" style="margin-top:10px; justify-content:center;" id="c4-pie-legend"></div>
-      </div>
+      <div class="banner span-8" style="aspect-ratio:16/7;" id="c4-priority-banner"></div>
       <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Input cost savings</div>
-        <div class="ring-wrap" id="c4-ring1" style="margin-top:6px;"></div>
+        <div class="card-title" style="align-self:flex-start;">AI data quality score</div>
+        <div class="card-sub" style="align-self:flex-start;">Target &gt;85/100</div>
+        <div class="ring-wrap" id="c4-quality-ring" style="margin-top:6px;"></div>
       </div>
+
+      <div class="card span-12">
+        <div class="icon-row" style="justify-content:space-between;" id="c4-icons"></div>
+      </div>
+
       <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
         <div class="card-title" style="align-self:flex-start;">Yield prediction confidence</div>
+        <div class="card-sub" style="align-self:flex-start;">Target ≥80% after one full season</div>
         <div class="ring-wrap" id="c4-ring2" style="margin-top:6px;"></div>
       </div>
-
-      <div class="card span-3" style="display:flex; flex-direction:column; align-items:center;">
-        <div class="card-title" style="align-self:flex-start;">Blocks vs. yield baseline</div>
-        <div id="c4-pie2" style="margin-top:6px;"></div>
+      <div class="card span-4">
+        <div class="card-title">14-day disease risk probability</div>
+        <div class="card-sub">By block · target &lt;20% · critical ≥50%</div>
+        <div id="c4-disease-risk"></div>
       </div>
-      <div class="card span-3" style="display:flex; flex-direction:column; align-items:center;">
-        <div class="card-title" style="align-self:flex-start;">Agrochemical use reduction</div>
-        <div id="c4-pie3" style="margin-top:6px;"></div>
+      <div class="card span-4">
+        <div class="card-title">Fertiliser recommendation accuracy</div>
+        <div class="card-sub">AI nitrogen recs vs. crop response</div>
+        <div id="c4-fert-accuracy"></div>
+      </div>
+
+      <div class="card span-6">
+        <div class="card-title">Block priority score</div>
+        <div class="card-sub">No block should stay "high priority" for &gt;2 cycles</div>
+        <div id="c4-priority-list"></div>
       </div>
       <div class="card span-6">
-        <div class="card-title">30-day yield forecast vs. actual</div>
-        <div class="card-sub">Green leaf, kg/ha · last 12 periods</div>
-        <div id="c4-dual"></div>
-        <div class="legend" style="margin-top:6px;">
-          <div class="legend-item"><span class="dot" style="background:var(--green)"></span>Forecast</div>
-          <div class="legend-item"><span class="dot" style="background:var(--amber)"></span>Actual</div>
-        </div>
+        <div class="card-title">AI data quality by source</div>
+        <div class="card-sub">Imagery reliability feeding the KPI models</div>
+        <div id="c4-quality-sources"></div>
       </div>
     </div>
   </div>
@@ -310,4 +321,4 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-<script src="dashboard.js"></script>
+<script src="js/dashboard.js"></script>
