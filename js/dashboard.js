@@ -76,10 +76,11 @@ function mkCanvas(id, h) {
   return canvas;
 }
 
-/* line / area chart — renders into div#id */
+/* line / area chart — renders into div#id. Pass opts.timeSeries to render
+   a full chart (axes + hover tooltip) instead of the default bare sparkline. */
 function lineChart(id, values, color, opts = {}) {
   const col = rc(color);
-  const canvas = mkCanvas(id, opts.h || 120);
+  const canvas = mkCanvas(id, opts.fill ? 0 : (opts.h || 120));
   return new Chart(canvas, {
     type: 'line',
     data: {
@@ -98,8 +99,18 @@ function lineChart(id, values, color, opts = {}) {
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { enabled: false } },
-      scales: { x: { display: false }, y: { display: false } }
+      interaction: opts.timeSeries ? { mode: 'index', intersect: false } : undefined,
+      plugins: {
+        legend: { display: false },
+        tooltip: opts.timeSeries ? {
+          enabled: true, backgroundColor: CLR.surface2, borderColor: CLR.border, borderWidth: 1,
+          titleColor: CLR.textDim, bodyColor: CLR.text, padding: 9,
+        } : { enabled: false }
+      },
+      scales: opts.timeSeries ? {
+        x: { grid: { color: CLR.border + '60' }, ticks: { font: { size: 8.5 }, maxRotation: 0, color: CLR.textFaint } },
+        y: { grid: { color: CLR.border }, ticks: { font: { size: 8.5 }, color: CLR.textFaint } }
+      } : { x: { display: false }, y: { display: false } }
     }
   });
 }
@@ -705,7 +716,19 @@ c4costSeries.forEach(s => {
    Plantations": A Nutrient & Fertiliser, B Water & Irrigation,
    C Crop Protection & Agrochemical, D Energy/Labour/Operational.
    ================================================================ */
-bannerWithOverlay("c2-hero", "forest", "Nitrogen Use Efficiency", "8.4 kg yield / kg N", "Group A");
+/* Agrochemical Use Reduction — application volume trend, blanket
+   baseline vs. targeted (image-guided) spraying, Group C */
+const c2agroMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"];
+const c2agroSeries = [
+  { label: "Blanket (baseline)",    color: "var(--text-faint)", data: [100, 100, 100, 100, 100, 100, 100, 100] },
+  { label: "Targeted application",  color: "var(--green)",      data: [96, 93, 90, 88, 86, 84, 83, 82] },
+];
+multiLineChart("c2-agro-trend", c2agroSeries, c2agroMonths, { fill: true, yLabel: "Index" });
+const c2agroLegend = document.getElementById("c2-agro-trend-legend");
+c2agroSeries.forEach(s => {
+  const d = document.createElement("div"); d.className = "legend-item";
+  d.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}`; c2agroLegend.appendChild(d);
+});
 
 /* Water Use Efficiency (WUE) — kg made-tea / m3 water, vs. an estate benchmark of 3.5 */
 document.getElementById("c2-ring").appendChild(ringChart(91, CLR.green, 110, 10, null, { label: "WUE" }));
@@ -720,7 +743,10 @@ const c2icons = document.getElementById("c2-icons");
 });
 
 /* Fertiliser Cost Efficiency (FCE) — LKR per kg yield, trending down = improving */
-lineChart("c2-a1", [42, 41, 40, 39, 38, 37, 36, 35], CLR.green, { h: 90 });
+lineChart("c2-a1", [42, 41, 40, 39, 38, 37, 36, 35], CLR.green, {
+  h: 140, timeSeries: true, dots: true,
+  labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"],
+});
 
 /* Irrigation Trigger Compliance — % of decisions image-supported, target >=80% */
 document.getElementById("c2-irrigation-ring").appendChild(ringChart(83, CLR.green, 90, 9, null, { label: "Compliant" }));

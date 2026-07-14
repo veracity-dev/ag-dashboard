@@ -198,51 +198,54 @@
   <div class="view" id="v2">
     <div class="grid g-12">
 
-      <div class="banner span-8" style="aspect-ratio:16/7;" id="c2-hero"></div>
-      <!-- <div id="input-cost-savings" class="card span-8">
-        <div class="card-title">Input cost savings — trend</div>
-        <div class="card-sub">Cumulative savings by category, LKR '000 · monthly</div>
-        <div id="c4-cost-trend"></div>
-        <div class="legend" id="c4-cost-trend-legend" style="margin-top:8px;"></div>
-      </div> -->
+      <div class="card span-8" style="display:flex; flex-direction:column;">
+        <div class="card-title">Agrochemical Use Reduction</div>
+        <div class="card-sub">Application volume index (blanket = 100) · monthly</div>
+        <div id="c2-agro-trend" style="flex:1; min-height:0;"></div>
+        <div class="legend" id="c2-agro-trend-legend" style="margin-top:8px;"></div>
+      </div>
 
-      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Water use efficiency</div>
-        <div class="card-sub" style="align-self:flex-start;">kg made-tea / m³ water · Group B</div>
-        <div class="ring-wrap" id="c2-ring" style="margin-top:6px;"></div>
-        <span class="delta up" style="margin-top:8px;">Above benchmark</span>
+      <div id="c2-agrochemical" class="card span-4">
+        <div class="card-title">Agrochemical use reduction for the Month</div>
+        <div class="card-sub">Blanket vs. targeted application</div>
+        <div id="c2-bars"></div>
+        <div class="mini-rows" id="c2-bars-rows"></div>
       </div>
 
       <div class="card span-12">
         <div class="icon-row" style="justify-content:space-between;" id="c2-icons"></div>
       </div>
 
-      <div class="card span-4"><div class="card-title">Fertiliser cost efficiency</div><div class="card-sub">LKR / kg yield · Group A</div><div id="c2-a1"></div></div>
+      <div id="c2-fertiliser" class="card span-4">
+        <div class="card-title">Fertiliser cost efficiency</div>
+        <div class="card-sub">LKR / kg yield</div>
+        <div id="c2-a1"></div>
+      </div>
       <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
         <div class="card-title" style="align-self:flex-start;">Irrigation trigger compliance</div>
-        <div class="card-sub" style="align-self:flex-start;">Target ≥80% · Group B</div>
+        <div class="card-sub" style="align-self:flex-start;">Target ≥80%</div>
         <div class="ring-wrap" id="c2-irrigation-ring" style="margin-top:6px;"></div>
       </div>
-      <div class="card span-4">
-        <div class="card-title">Agrochemical use reduction</div>
-        <div class="card-sub">Blanket vs. targeted application · Group C</div>
-        <div id="c2-bars"></div>
-        <div class="mini-rows" id="c2-bars-rows"></div>
+      <div id="c2-water-use" class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <div class="card-title" style="align-self:flex-start;">Water use efficiency</div>
+        <div class="card-sub" style="align-self:flex-start;">kg made-tea / m³ water</div>
+        <div class="ring-wrap" id="c2-ring" style="margin-top:6px;"></div>
+        <span class="delta up" style="margin-top:8px;">Above benchmark</span>
       </div>
 
       <div class="card span-4">
         <div class="card-title">Nitrogen deficiency by block</div>
-        <div class="card-sub">Share of zone flagged · Group A</div>
+        <div class="card-sub">Share of zone flagged</div>
         <div id="c2-ndef-zones"></div>
       </div>
       <div class="card span-4">
         <div class="card-title">Irrigation compliance by block</div>
-        <div class="card-sub">Image-supported decisions · Group B</div>
+        <div class="card-sub">Image-supported decisions</div>
         <div id="c2-irrigation-zones"></div>
       </div>
       <div class="card span-4">
         <div class="card-title">Drone operations</div>
-        <div class="card-sub">Monitoring efficiency · Group D</div>
+        <div class="card-sub">Monitoring efficiency</div>
         <div class="mini-rows" id="c2-drone-rows"></div>
       </div>
     </div>
