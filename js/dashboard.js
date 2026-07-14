@@ -109,7 +109,11 @@ function lineChart(id, values, color, opts = {}) {
       },
       scales: opts.timeSeries ? {
         x: { grid: { color: CLR.border + '60' }, ticks: { font: { size: 8.5 }, maxRotation: 0, color: CLR.textFaint } },
-        y: { grid: { color: CLR.border }, ticks: { font: { size: 8.5 }, color: CLR.textFaint } }
+        y: {
+          grid: { color: CLR.border },
+          ticks: { font: { size: 8.5 }, color: CLR.textFaint, ...(opts.ySuffix ? { callback: v => v + opts.ySuffix } : {}) },
+          title: opts.yLabel ? { display: true, text: opts.yLabel, font: { size: 9 }, color: CLR.textFaint } : undefined
+        }
       } : { x: { display: false }, y: { display: false } }
     }
   });
@@ -787,7 +791,18 @@ const c2drone = document.getElementById("c2-drone-rows");
 /* ================================================================
    VIEW 3 — Soil Health (Category D: 5 KPIs)
    ================================================================ */
-bannerWithOverlay("c3-banner", "alpine", "Soil Moisture Status", "0.24 NDMI", "Above target");
+/* Soil Moisture Trend — estate-average NDMI vs. target, monthly */
+const c3ndmiMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"];
+const c3ndmiSeries = [
+  { label: "Estate avg NDMI", color: "var(--blue)",       data: [0.19, 0.20, 0.21, 0.22, 0.23, 0.22, 0.24, 0.24] },
+  { label: "Target (0.20)",   color: "var(--text-faint)", data: [0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20] },
+];
+multiLineChart("c3-ndmi-trend", c3ndmiSeries, c3ndmiMonths, { fill: true, yLabel: "NDMI" });
+const c3ndmiLegend = document.getElementById("c3-ndmi-trend-legend");
+c3ndmiSeries.forEach(s => {
+  const d = document.createElement("div"); d.className = "legend-item";
+  d.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}`; c3ndmiLegend.appendChild(d);
+});
 
 /* Soil Moisture (NDMI) by block — target >0.20, warning 0.10-0.20, critical <0.10 */
 const c3t = document.getElementById("c3-tickets");
@@ -799,7 +814,11 @@ const c3t = document.getElementById("c3-tickets");
 });
 
 /* Surface Heat Stress — LST anomaly vs. seasonal baseline (relative, not a fixed target) */
-lineChart("c3-heat", [0.4, 0.6, 0.3, 0.8, 1.1, 0.9, 1.4, 1.2], CLR.amber, { h: 100 });
+lineChart("c3-heat", [0.4, 0.6, 0.3, 0.8, 1.1, 0.9, 1.4, 1.2], CLR.amber, {
+  h: 140, timeSeries: true, dots: true,
+  labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"],
+  yLabel: "LST anomaly", ySuffix: "°C",
+});
 
 /* ================================================================
    VIEW 4 — Predictive AI (Category E: 5 KPIs)

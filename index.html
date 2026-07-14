@@ -255,7 +255,12 @@
   <div class="view" id="v3">
     <div class="grid g-12">
 
-      <div class="banner span-7" style="aspect-ratio:16/9;" id="c3-banner"></div>
+      <div class="card span-7" style="display:flex; flex-direction:column;">
+        <div class="card-title">Soil Moisture Trend</div>
+        <div class="card-sub">NDMI · estate average · monthly · target &gt;0.20</div>
+        <div id="c3-ndmi-trend" style="flex:1; min-height:0;"></div>
+        <div class="legend" id="c3-ndmi-trend-legend" style="margin-top:8px;"></div>
+      </div>
 
       <div class="card span-5" style="display:flex; flex-direction:column; gap:10px; justify-content:center;">
         <div>
