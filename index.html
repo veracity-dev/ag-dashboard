@@ -303,7 +303,12 @@
   <div class="view" id="v4">
     <div class="grid g-12">
 
-      <div class="banner span-8" style="aspect-ratio:16/7;" id="c4-priority-banner"></div>
+      <div class="card span-8" style="display:flex; flex-direction:column;">
+        <div class="card-title">Yield Prediction Confidence</div>
+        <div class="card-sub">Model confidence trend · by season · target ≥80%</div>
+        <div id="c4-confidence-trend" style="flex:1; min-height:0;"></div>
+        <div class="legend" id="c4-confidence-trend-legend" style="margin-top:8px;"></div>
+      </div>
       <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
         <div class="card-title" style="align-self:flex-start;">AI data quality score</div>
         <div class="card-sub" style="align-self:flex-start;">Target &gt;85/100</div>

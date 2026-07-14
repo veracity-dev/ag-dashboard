@@ -822,12 +822,29 @@ lineChart("c3-heat", [0.4, 0.6, 0.3, 0.8, 1.1, 0.9, 1.4, 1.2], CLR.amber, {
 
 /* ================================================================
    VIEW 4 — Predictive AI (Category E: 5 KPIs)
-   Reuses the Block <ring><compass> identity from the Estate block map
-   and the Drone/Sentinel-2/Landsat/AI Fusion imagery-source identities
-   from Health & Yield's "Imagery sources" widget, so this tab reads as
-   the AI layer behind those alerts rather than a disconnected page.
+   Hero card trends Yield Prediction Confidence across seasons — a
+   headline metric for the AI layer since it shows the model actually
+   improving with more ground-truth data, rather than a single block's
+   priority alert (which already has its own spotlight on Health &
+   Yield and is covered again below in the Block priority score list).
+   Reuses the Drone/Sentinel-2/Landsat/AI Fusion imagery-source
+   identities from Health & Yield's "Imagery sources" widget, so this
+   tab reads as the AI layer behind those alerts rather than a
+   disconnected page.
    ================================================================ */
-bannerWithOverlay("c4-priority-banner", "dusk", "Block 4NW", "2 of 2 cycles — escalate", "High priority");
+/* Yield Prediction Confidence — trend by season, target >=80% (crossed
+   once a full season of ground-truth yield data feeds the model) */
+const c4confSeasons = ["S1","S2","S3","S4","S5"];
+const c4confSeries = [
+  { label: "Confidence", color: "var(--blue)",       data: [55, 66, 74, 79, 83] },
+  { label: "Target (80%)", color: "var(--text-faint)", data: [80, 80, 80, 80, 80] },
+];
+multiLineChart("c4-confidence-trend", c4confSeries, c4confSeasons, { fill: true, yLabel: "%" });
+const c4confLegend = document.getElementById("c4-confidence-trend-legend");
+c4confSeries.forEach(s => {
+  const d = document.createElement("div"); d.className = "legend-item";
+  d.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}`; c4confLegend.appendChild(d);
+});
 
 /* AI Data Quality Score — target >85/100 */
 document.getElementById("c4-quality-ring").appendChild(ringChart(88, CLR.green, 110, 10, null, { label: "Quality score" }));
@@ -853,7 +870,11 @@ const c4risk = document.getElementById("c4-disease-risk");
 });
 
 /* Fertiliser Recommendation Accuracy — improving cycle over cycle */
-lineChart("c4-fert-accuracy", [68, 71, 70, 74, 76, 75, 79, 81], CLR.green, { h: 90 });
+lineChart("c4-fert-accuracy", [68, 71, 70, 74, 76, 75, 79, 81], CLR.green, {
+  h: 140, timeSeries: true, dots: true,
+  labels: ["C1","C2","C3","C4","C5","C6","C7","C8"],
+  yLabel: "Accuracy", ySuffix: "%",
+});
 
 /* Block Priority Score — ranks blocks needing attention; Block 4NW is the
    same block already flagged in Health & Yield's priority-alert card */
