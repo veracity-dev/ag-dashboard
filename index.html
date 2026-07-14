@@ -38,10 +38,10 @@
   <div class="view active" id="v1">
     <div class="grid g-12">
       
-      <div id="yield-forecast" class="card span-6">
+      <div id="yield-forecast" class="card span-6" style="display:flex; flex-direction:column;">
         <div class="card-title">Yield &amp; Financial Trend</div>
         <div class="card-sub">kg/ha (left axis) · Revenue at Risk, LKR M (right axis)</div>
-        <div id="c1-yield-forecast"></div>
+        <div id="c1-yield-forecast" style="flex:1; min-height:0;"></div>
         <div class="legend" id="c1-yield-forecast-legend" style="margin-top:8px;"></div>
       </div>
 
@@ -116,7 +116,7 @@
             <div class="legend-item"><span style="width:14px; height:0; border-top:2px dashed var(--red); display:inline-block;"></span>Disease Risk Score</div>
           </div>
         </div>
-        <div id="c1-area"></div>
+        <div id="c1-area" style="flex:1; min-height:0;"></div>
         <div class="legend-strip" id="c1-legend">
           <span class="card-sub" style="margin:0 8px 0 0; text-transform:uppercase; letter-spacing:.06em; font-size:10px;">Composite inputs</span>
         </div>

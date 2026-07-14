@@ -59,10 +59,18 @@ document.getElementById("tabs").addEventListener("click", e => {
    Chart.js wrapper functions
    ================================================================ */
 
-/* create a canvas inside a container div, set container height */
+/* create a canvas inside a container div, set container height.
+   Pass a falsy h (or opts.fill in the chart wrappers) to instead stretch
+   the container to fill its flex parent, e.g. to match a paired card's
+   height instead of a fixed pixel value. */
 function mkCanvas(id, h) {
   const wrap = document.getElementById(id);
-  wrap.style.height = h + 'px';
+  if (h) {
+    wrap.style.height = h + 'px';
+  } else {
+    wrap.style.flex = '1';
+    wrap.style.minHeight = '0';
+  }
   const canvas = document.createElement('canvas');
   wrap.appendChild(canvas);
   return canvas;
@@ -245,7 +253,7 @@ function centerLabel(wrapId, n, l) {
 
 /* KPI trend chart with health/risk bands — renders into div#id */
 function kpiChart(id, scoreVals, riskVals, weekLabels, opts = {}) {
-  const canvas = mkCanvas(id, opts.h || 190);
+  const canvas = mkCanvas(id, opts.fill ? 0 : (opts.h || 190));
 
   const bandPlugin = {
     id: 'kpiBands',
@@ -321,7 +329,7 @@ function kpiChart(id, scoreVals, riskVals, weekLabels, opts = {}) {
    opts.dualAxis / opts.y1Label) to plot it against a right-hand scale
    when its unit isn't comparable to the rest (e.g. LKR vs. kg/ha). */
 function multiLineChart(id, series, labels, opts = {}) {
-  const canvas = mkCanvas(id, opts.h || 160);
+  const canvas = mkCanvas(id, opts.fill ? 0 : (opts.h || 160));
   const scales = {
     x: { grid: { color: CLR.border + '60' }, ticks: { font: { size: 8.5 }, maxRotation: 0, color: CLR.textFaint } },
     y: { position: 'left', grid: { color: CLR.border }, ticks: { font: { size: 8.5 }, color: CLR.textFaint },
@@ -426,7 +434,7 @@ function bannerWithOverlay(id, palette, title, big, chip) {
 const c1WeekLabels  = Array.from({ length: 14 }, (_, i) => "W" + (i + 1));
 const c1BlockHealth = [58, 61, 64, 63, 67, 70, 69, 74, 77, 76, 81, 83, 85, 88];
 const c1DiseaseRisk = [42, 40, 38, 39, 35, 33, 34, 29, 26, 25, 21, 19, 16, 14];
-kpiChart("c1-area", c1BlockHealth, c1DiseaseRisk, c1WeekLabels, { h: 190 });
+kpiChart("c1-area", c1BlockHealth, c1DiseaseRisk, c1WeekLabels, { fill: true });
 
 const c1Legend = document.getElementById("c1-legend");
 [["NDVI", CLR.green], ["EVI2", CLR.green2], ["NDRE", CLR.blue], ["NDMI", "#5fc4c1"], ["Disease hotspots", CLR.red]].forEach(([n, c]) => {
@@ -560,7 +568,7 @@ const c1yieldSeries = [
   { label: "Green Leaf Yield Estimate (kg/ha)", color: "var(--blue)",  axis: "y",  data: [2000, 2030, 2060, 2090, 2100, 2130, 2150, 2170, 2200, 2220, 2250, 2280] },
   { label: "Revenue at Risk (LKR M)",           color: "var(--amber)", axis: "y1", data: [15.2, 14.5, 13.9, 13.2, 12.6, 12.0, 11.4, 10.9, 10.4, 10.0, 9.7, 9.5] },
 ];
-multiLineChart("c1-yield-forecast", c1yieldSeries, c1yWeeks, { h: 160, dualAxis: true, yLabel: "kg/ha", y1Label: "LKR M", y1Suffix: 'M' });
+multiLineChart("c1-yield-forecast", c1yieldSeries, c1yWeeks, { fill: true, dualAxis: true, yLabel: "kg/ha", y1Label: "LKR M", y1Suffix: 'M' });
 const c1yLegend = document.getElementById("c1-yield-forecast-legend");
 c1yieldSeries.forEach(s => {
   const d = document.createElement("div"); d.className = "legend-item";
