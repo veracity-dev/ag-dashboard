@@ -489,7 +489,7 @@ function bannerWithOverlay(id, palette, title, big, chip) {
 }
 
 /* ================================================================
-   VIEW 1 — Health
+   VIEW 1 — Crop Health & Disease Intelligence (Section A)
    ================================================================ */
 const c1WeekLabels  = Array.from({ length: 14 }, (_, i) => "W" + (i + 1));
 const c1BlockHealth = [58, 61, 64, 63, 67, 70, 69, 74, 77, 76, 81, 83, 85, 88];
@@ -719,6 +719,39 @@ c1yieldSeries.forEach(s => {
   });
 })();
 
+/* Crop Vigor Score — canopy greenness/strength trend, early yield-risk
+   warning ahead of the weighing scale. Good: strong greenness · Watch:
+   below normal · Act: well below normal. */
+lineChart("ch-vigor-trend", [78, 80, 83, 85, 84, 87, 89, 91], CLR.green, {
+  h: 110, timeSeries: true, dots: true,
+  labels: ["W1","W2","W3","W4","W5","W6","W7","W8"],
+});
+
+/* Flush Readiness Score — Ready / Approaching / Weak flush-delayed.
+   Estate is currently "Approaching": the scrubber fill marks how far
+   along the weak-to-ready spectrum the estate sits this week. */
+document.getElementById("ch-flush-fill").style.width = "62%";
+
+/* Disease Hotspot Coverage by block — % of block currently showing
+   symptoms right now (distinct from the forward-looking Disease Risk
+   Score). Low <5% · watch 5-15% · act >15%. */
+const chHotspot = document.getElementById("ch-hotspot");
+[["Block 1NE", "1%", CLR.green], ["Block 2SE", "3%", CLR.green], ["Block 3SW", "9%", CLR.amber], ["Block 4NW", "19%", CLR.red]].forEach(([n, v, c]) => {
+  const row = document.createElement("div"); row.className = "list-row";
+  row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v};background:${c}"></span></span></span><span class="val mono">${v}</span>`;
+  chHotspot.appendChild(row);
+});
+
+/* Disease Spread Rate — rate of change of disease-affected estate
+   area over time. Target: stable/declining · Watch: increasing ·
+   Act: rapid week-to-week expansion. Estate is currently declining,
+   i.e. contained. */
+lineChart("ch-spread", [9, 8.5, 8, 7.2, 6.5, 6, 5.4, 5], CLR.amber, {
+  h: 150, timeSeries: true, dots: true,
+  labels: ["W1","W2","W3","W4","W5","W6","W7","W8"],
+  yLabel: "Affected area", ySuffix: "%",
+});
+
 /* Yield history — actual monthly green-leaf yield, this season vs. last
    season (kg/ha), replacing the old Block 2NW spotlight banner. */
 const c1yhMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -732,6 +765,24 @@ c1yieldHistorySeries.forEach(s => {
   const d = document.createElement("div"); d.className = "legend-item";
   d.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}`; c1yhLegend.appendChild(d);
 });
+
+/* Yield Anomaly Index — % gap between current and expected yield.
+   Good >=0% vs. baseline · watch -5 to -10% · act <-10%. Estate is
+   currently ahead of a normal season, having recovered from a small
+   deficit a few weeks back. */
+lineChart("yf-anomaly-spark", [-2, -1, 0, 1, 2, 2.5, 3, 3.2], CLR.green, { h: 80, dots: false });
+
+/* Revenue Protected — value of crop saved via early disease detection
+   (Section A's disease KPIs turned into a rupee figure). Target:
+   positive and increasing over time. Same $18,420 headline figure as
+   the estate-overview tile, so the two tabs agree. */
+lineChart("yf-protected-spark", [14200, 15100, 15800, 16400, 17200, 17800, 18420], CLR.green, { h: 70, dots: false });
+
+/* Revenue at Risk — financial exposure from drought/crop stress,
+   reusing the same series already plotted on the Yield & Financial
+   Trend chart so the current value (LKR 9.5M) matches everywhere it
+   appears. Target: 0 or decreasing. */
+lineChart("yf-risk-spark", [15.2, 14.5, 13.9, 13.2, 12.6, 12.0, 11.4, 10.9, 10.4, 10.0, 9.7, 9.5], CLR.amber, { h: 70, dots: false });
 
 mount("c4-pie", pieChart([{ v:34,color:CLR.green,label:"Fertilizer" },{ v:22,color:CLR.blue,label:"Pesticide" },{ v:28,color:CLR.amber,label:"Irrigation" },{ v:16,color:CLR.red,label:"Labor" }]));
 const pieLegend = document.getElementById("c4-pie-legend");
@@ -760,11 +811,34 @@ c4costSeries.forEach(s => {
 });
 
 /* ================================================================
-   VIEW 2 — Input & Resources
-   Groups A-D per "Precision Agriculture Intelligence for Horana
-   Plantations": A Nutrient & Fertiliser, B Water & Irrigation,
-   C Crop Protection & Agrochemical, D Energy/Labour/Operational.
+   VIEW 2 — Input & Resource Utilization (Section B)
+   Nutrient Management, Chemical Input Management, plus the estate's
+   existing Water/Irrigation and Labour/Drone widgets kept as
+   supplementary (not named in the KPI framework doc, not contradicted
+   by it either).
    ================================================================ */
+/* Nitrogen Use Reduction — application volume trend, blanket baseline
+   vs. targeted (deficiency-zone-guided) application, Nutrient
+   Management group. Same shape as Agrochemical Use Reduction below,
+   for the nitrogen/fertiliser side of input spend. */
+const irNMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"];
+const irNSeries = [
+  { label: "Blanket (baseline)",    color: "var(--text-faint)", data: [100, 100, 100, 100, 100, 100, 100, 100] },
+  { label: "Targeted application",  color: "var(--green)",      data: [97, 94, 91, 89, 87, 86, 85, 85] },
+];
+multiLineChart("ir-n-trend", irNSeries, irNMonths, { fill: true, yLabel: "Index" });
+const irNLegend = document.getElementById("ir-n-trend-legend");
+irNSeries.forEach(s => {
+  const d = document.createElement("div"); d.className = "legend-item";
+  d.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}`; irNLegend.appendChild(d);
+});
+
+barChart("ir-n-bars", [100, 85], (i) => i === 0 ? CLR.textFaint : CLR.green, { h: 100, labels: ["Blanket", "Targeted"] });
+const irNBarsRows = document.getElementById("ir-n-bars-rows");
+[["Reduction vs. baseline", "15%"], ["Deficiency area remaining", "4% of estate"]].forEach(([k, v]) => {
+  const r = document.createElement("div"); r.className = "mini-row"; r.innerHTML = `<span class="k">${k}</span><span class="v mono">${v}</span>`; irNBarsRows.appendChild(r);
+});
+
 /* Agrochemical Use Reduction — application volume trend, blanket
    baseline vs. targeted (image-guided) spraying, Group C */
 const c2agroMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"];
@@ -834,9 +908,12 @@ const c2drone = document.getElementById("c2-drone-rows");
 });
 
 /* ================================================================
-   VIEW 3 — Soil Health (Category D: 5 KPIs)
+   Moisture Stress Score & Heat Stress Score (Section A) — filed under
+   Crop Health & Disease in the KPI framework doc, not Soil Health, so
+   these render into the "v1" view even though the code lives here
+   next to the (also moved) Nitrogen Stress Score above.
    ================================================================ */
-/* Soil Moisture Trend — estate-average NDMI vs. target, monthly */
+/* Moisture Stress Score trend — estate-average NDMI vs. target, monthly */
 const c3ndmiMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"];
 const c3ndmiSeries = [
   { label: "Estate avg NDMI", color: "var(--blue)",       data: [0.19, 0.20, 0.21, 0.22, 0.23, 0.22, 0.24, 0.24] },
@@ -866,29 +943,25 @@ lineChart("c3-heat", [0.4, 0.6, 0.3, 0.8, 1.1, 0.9, 1.4, 1.2], CLR.amber, {
 });
 
 /* ================================================================
-   VIEW 4 — Predictive AI (Category E: 5 KPIs)
-   Hero card trends Yield Prediction Confidence across seasons — a
-   headline metric for the AI layer since it shows the model actually
-   improving with more ground-truth data, rather than a single block's
-   priority alert (which already has its own spotlight on Health &
-   Yield and is covered again below in the Block priority score list).
-   Reuses the Drone/Sentinel-2/Landsat/AI Fusion imagery-source
-   identities from Health & Yield's "Imagery sources" widget, so this
-   tab reads as the AI layer behind those alerts rather than a
-   disconnected page.
+   VIEW 4 — Predictive & AI Trend Indicators (Section E)
+   Hero card is the 30-Day Yield Forecast, benchmarked block-by-block
+   rather than as one universal figure. Reuses the Drone/Sentinel-2/
+   Landsat/AI Fusion imagery-source identities from the Crop Health
+   tab's imagery widget, so this tab reads as the AI layer behind
+   those alerts rather than a disconnected page.
    ================================================================ */
-/* Yield Prediction Confidence — trend by season, target >=80% (crossed
-   once a full season of ground-truth yield data feeds the model) */
-const c4confSeasons = ["S1","S2","S3","S4","S5"];
-const c4confSeries = [
-  { label: "Confidence", color: "var(--blue)",       data: [55, 66, 74, 79, 83] },
-  { label: "Target (80%)", color: "var(--text-faint)", data: [80, 80, 80, 80, 80] },
-];
-multiLineChart("c4-confidence-trend", c4confSeries, c4confSeasons, { fill: true, yLabel: "%" });
+/* 30-Day Yield Forecast — predicted green-leaf yield vs. each block's
+   own historical baseline (folds in the old per-hectare "Green Leaf
+   Yield Estimate" so it isn't shown to the owner twice). Same four
+   named blocks and yield deltas as the Digital Twin's yield-vs-baseline
+   layer, so the numbers agree tab to tab. */
+groupedBarChart("c4-confidence-trend", ["Block 1NE", "Block 2SE", "Block 3SW", "Block 4NW"],
+  [{ values: [2320, 2160, 1960, 1530] }, { values: [2130, 2080, 2020, 1780] }],
+  [CLR.blue, CLR.textFaint], { h: 210 });
 const c4confLegend = document.getElementById("c4-confidence-trend-legend");
-c4confSeries.forEach(s => {
+[["30-day forecast (kg/ha)", CLR.blue], ["Block baseline (kg/ha)", CLR.textFaint]].forEach(([n, c]) => {
   const d = document.createElement("div"); d.className = "legend-item";
-  d.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}`; c4confLegend.appendChild(d);
+  d.innerHTML = `<span class="dot" style="background:${c}"></span>${n}`; c4confLegend.appendChild(d);
 });
 
 /* AI Data Quality Score — target >85/100 */
@@ -903,10 +976,10 @@ const c4icons = document.getElementById("c4-icons");
   c4icons.appendChild(c);
 });
 
-/* Yield Prediction Confidence — target >=80% */
-document.getElementById("c4-ring2").appendChild(ringChart(83, CLR.blue, 100, 10, null, { label: "Confidence" })); centerLabel("c4-ring2", "83%", "confidence");
+/* Forecast error — target <=10-15% after calibration */
+document.getElementById("c4-ring2").appendChild(ringChart(9, CLR.green, 100, 10, null, { label: "Forecast error" })); centerLabel("c4-ring2", "9%", "forecast error");
 
-/* 14-Day Disease Risk Probability by block — target <20%, critical >=50% */
+/* 14-Day Disease Risk Probability by block — target <20%, watch 20-50%, act >=50% */
 const c4risk = document.getElementById("c4-disease-risk");
 [["Block 1NE", "12%", CLR.green], ["Block 2SE", "18%", CLR.green], ["Block 3SW", "34%", CLR.amber], ["Block 4NW", "58%", CLR.red]].forEach(([n, v, c]) => {
   const row = document.createElement("div"); row.className = "list-row";
@@ -938,4 +1011,221 @@ const c4quality = document.getElementById("c4-quality-sources");
   const row = document.createElement("div"); row.className = "list-row";
   row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v}%;background:${c}"></span></span></span><span class="val mono">${v}</span>`;
   c4quality.appendChild(row);
+});
+
+/* ================================================================
+   VIEW 5 — Digital Twin (estate block parcels)
+   Renders the estate as a slice-and-dice treemap — 5 north–south
+   strips × 4 compass blocks each, sized by block area — with each
+   parcel's corners jittered by a seeded offset so boundaries read as
+   surveyed land rather than a perfect grid. Block1NE/2SE/3SW/4NW carry
+   the exact disease-risk, NDMI and priority values already used on the
+   other tabs so the whole dashboard tells one consistent story.
+   ================================================================ */
+const DT_BLOCKS = [
+  { name: "Block 1NE", row: 1, col: "NE", area: 2.1, ndvi: 0.71, moisture: 0.26, risk: 12, yieldDelta: 9,   issue: "None significant",   scan: "1 day ago" },
+  { name: "Block 1SE", row: 1, col: "SE", area: 1.6, ndvi: 0.69, moisture: 0.25, risk: 15, yieldDelta: 6,   issue: "None significant",   scan: "2 days ago" },
+  { name: "Block 1SW", row: 1, col: "SW", area: 2.8, ndvi: 0.65, moisture: 0.22, risk: 22, yieldDelta: -1,  issue: "Minor red rust",     scan: "2 days ago" },
+  { name: "Block 1NW", row: 1, col: "NW", area: 1.3, ndvi: 0.73, moisture: 0.27, risk: 9,  yieldDelta: 11,  issue: "None significant",   scan: "1 day ago" },
+
+  { name: "Block 2NE", row: 2, col: "NE", area: 1.9, ndvi: 0.70, moisture: 0.25, risk: 14, yieldDelta: 7,   issue: "None significant",   scan: "3 days ago" },
+  { name: "Block 2SE", row: 2, col: "SE", area: 2.4, ndvi: 0.67, moisture: 0.22, risk: 18, yieldDelta: 4,   issue: "None significant",   scan: "1 day ago" },
+  { name: "Block 2SW", row: 2, col: "SW", area: 1.5, ndvi: 0.62, moisture: 0.21, risk: 27, yieldDelta: -5,  issue: "Red rust",           scan: "2 days ago" },
+  { name: "Block 2NW", row: 2, col: "NW", area: 2.2, ndvi: 0.71, moisture: 0.26, risk: 11, yieldDelta: 8,   issue: "None significant",   scan: "3 days ago" },
+
+  { name: "Block 3NE", row: 3, col: "NE", area: 2.6, ndvi: 0.67, moisture: 0.23, risk: 19, yieldDelta: 2,   issue: "Minor pest pressure",scan: "2 days ago" },
+  { name: "Block 3SE", row: 3, col: "SE", area: 1.4, ndvi: 0.68, moisture: 0.24, risk: 16, yieldDelta: 5,   issue: "None significant",   scan: "1 day ago" },
+  { name: "Block 3SW", row: 3, col: "SW", area: 3.1, ndvi: 0.58, moisture: 0.18, risk: 34, yieldDelta: -3,  issue: "Red rust",           scan: "1 day ago" },
+  { name: "Block 3NW", row: 3, col: "NW", area: 1.8, ndvi: 0.64, moisture: 0.22, risk: 24, yieldDelta: -2,  issue: "Canopy thinning",    scan: "3 days ago" },
+
+  { name: "Block 4NE", row: 4, col: "NE", area: 1.7, ndvi: 0.59, moisture: 0.19, risk: 31, yieldDelta: -6,  issue: "Water stress",       scan: "2 days ago" },
+  { name: "Block 4SE", row: 4, col: "SE", area: 2.9, ndvi: 0.70, moisture: 0.25, risk: 13, yieldDelta: 7,   issue: "None significant",   scan: "1 day ago" },
+  { name: "Block 4SW", row: 4, col: "SW", area: 2.0, ndvi: 0.66, moisture: 0.23, risk: 20, yieldDelta: 0,   issue: "Minor pest pressure",scan: "2 days ago" },
+  { name: "Block 4NW", row: 4, col: "NW", area: 2.5, ndvi: 0.43, moisture: 0.09, risk: 58, yieldDelta: -14, issue: "Blister blight",     scan: "1 day ago" },
+
+  { name: "Block 5NE", row: 5, col: "NE", area: 1.5, ndvi: 0.68, moisture: 0.24, risk: 17, yieldDelta: 5,   issue: "None significant",   scan: "2 days ago" },
+  { name: "Block 5SE", row: 5, col: "SE", area: 2.3, ndvi: 0.72, moisture: 0.27, risk: 10, yieldDelta: 10,  issue: "None significant",   scan: "1 day ago" },
+  { name: "Block 5SW", row: 5, col: "SW", area: 1.9, ndvi: 0.61, moisture: 0.19, risk: 29, yieldDelta: -4,  issue: "Water stress",       scan: "3 days ago" },
+  { name: "Block 5NW", row: 5, col: "NW", area: 2.7, ndvi: 0.73, moisture: 0.27, risk: 8,  yieldDelta: 12,  issue: "None significant",   scan: "1 day ago" },
+];
+
+const DT_LEGENDS = {
+  risk:     [["Low · <20%", CLR.green], ["Moderate · 20–49%", CLR.amber], ["High · ≥50%", CLR.red]],
+  ndvi:     [["Healthy canopy", CLR.green], ["Moderate vigour", CLR.amber], ["Low vigour", CLR.red]],
+  moisture: [["Good · >0.20", CLR.green], ["Watch · 0.10–0.20", CLR.amber], ["Act · <0.10", CLR.red]],
+  yield:    [["Above baseline", CLR.green], ["At baseline", CLR.amber], ["Below baseline", CLR.red]],
+};
+
+function dtColor(layer, b) {
+  if (layer === "ndvi")     return b.ndvi < 0.48 ? CLR.red : b.ndvi < 0.66 ? CLR.amber : CLR.green;
+  if (layer === "moisture") return b.moisture < 0.10 ? CLR.red : b.moisture < 0.20 ? CLR.amber : CLR.green;
+  if (layer === "yield")    return b.yieldDelta <= -3 ? CLR.red : b.yieldDelta < 3 ? CLR.amber : CLR.green;
+  return b.risk >= 50 ? CLR.red : b.risk >= 20 ? CLR.amber : CLR.green; /* risk (default) */
+}
+
+function dtRecommendedAction(b) {
+  if (b.risk >= 50) return "Inspect and treat within 48 hours";
+  if (b.moisture < 0.10) return "Irrigate immediately";
+  if (b.risk >= 30) return "Schedule inspection this week";
+  if (b.moisture < 0.20) return "Increase irrigation frequency";
+  if (b.yieldDelta <= -3) return "Review input program against baseline";
+  return "Continue routine monitoring";
+}
+
+/* deterministic pseudo-random in [0,1), seeded so parcel edges stay
+   put across reloads instead of reshuffling every render */
+function dtSeededRand(seed) {
+  const s = Math.sin(seed * 12.9898) * 43758.5453;
+  return s - Math.floor(s);
+}
+
+/* slice-and-dice treemap: 5 rows (north–south strips), each split into
+   its 4 compass blocks, both sized by cumulative block area */
+function dtComputeLayout(blocks, w, h, gap) {
+  const rows = [1, 2, 3, 4, 5].map(r => blocks.filter(b => b.row === r));
+  const rowWeights = rows.map(rb => rb.reduce((s, b) => s + b.area, 0));
+  const totalWeight = rowWeights.reduce((a, b) => a + b, 0);
+  const rects = [];
+  let y = 0;
+  rows.forEach((rb, ri) => {
+    const rh = h * rowWeights[ri] / totalWeight;
+    const rowWeight = rowWeights[ri];
+    let x = 0;
+    rb.forEach(b => {
+      const cw = w * b.area / rowWeight;
+      rects.push({ block: b, x: x + gap / 2, y: y + gap / 2, w: cw - gap, h: rh - gap });
+      x += cw;
+    });
+    y += rh;
+  });
+  return rects;
+}
+
+/* jitter a rect's 4 corners into an organic quadrilateral */
+function dtParcelPoints(rect, idx) {
+  const corners = [[rect.x, rect.y], [rect.x + rect.w, rect.y], [rect.x + rect.w, rect.y + rect.h], [rect.x, rect.y + rect.h]];
+  const amt = Math.min(rect.w, rect.h) * 0.05;
+  return corners.map((c, ci) => {
+    const jx = (dtSeededRand(idx * 4 + ci) - 0.5) * 2 * amt;
+    const jy = (dtSeededRand(idx * 4 + ci + 0.37) - 0.5) * 2 * amt;
+    return `${(c[0] + jx).toFixed(1)},${(c[1] + jy).toFixed(1)}`;
+  }).join(" ");
+}
+
+(function () {
+  const dtMapHost = document.getElementById("dt-map");
+  if (!dtMapHost) return;
+
+  const DT_W = 1000, DT_H = 620, DT_GAP = 6;
+  const rects = dtComputeLayout(DT_BLOCKS, DT_W, DT_H, DT_GAP);
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${DT_W} ${DT_H}`);
+  let layer = "risk";
+
+  const polys = rects.map((rect, idx) => {
+    const poly = document.createElementNS(svgNS, "polygon");
+    poly.setAttribute("points", dtParcelPoints(rect, idx));
+    poly.setAttribute("fill", dtColor(layer, rect.block));
+    poly.setAttribute("fill-opacity", "0.88");
+    poly.setAttribute("stroke", TERRACE_DIVIDER);
+    poly.setAttribute("stroke-width", "1.4");
+    poly.style.cursor = "pointer";
+    svg.appendChild(poly);
+    return poly;
+  });
+
+  const dtFields = { name: "dt-name", area: "dt-area", ndvi: "dt-ndvi", moisture: "dt-moisture", risk: "dt-risk", yieldDelta: "dt-yield", issue: "dt-issue", scan: "dt-scan" };
+
+  function selectBlock(idx) {
+    polys.forEach(p => { p.setAttribute("stroke-width", "1.4"); p.setAttribute("stroke", TERRACE_DIVIDER); });
+    polys[idx].setAttribute("stroke-width", "3");
+    polys[idx].setAttribute("stroke", CLR.text);
+    const b = rects[idx].block;
+    document.getElementById(dtFields.name).textContent = b.name;
+    document.getElementById(dtFields.area).textContent = b.area.toFixed(1) + " ha";
+    document.getElementById(dtFields.ndvi).textContent = b.ndvi.toFixed(2);
+    document.getElementById(dtFields.moisture).textContent = b.moisture.toFixed(2);
+    document.getElementById(dtFields.risk).textContent = b.risk + "%";
+    document.getElementById(dtFields.yieldDelta).textContent = (b.yieldDelta > 0 ? "+" : "") + b.yieldDelta + "% vs baseline";
+    document.getElementById(dtFields.issue).textContent = b.issue;
+    document.getElementById(dtFields.scan).textContent = b.scan;
+    document.getElementById("dt-action").textContent = dtRecommendedAction(b);
+  }
+
+  rects.forEach((rect, idx) => {
+    const poly = polys[idx];
+    poly.addEventListener("click", () => selectBlock(idx));
+    poly.addEventListener("mouseenter", () => poly.setAttribute("fill-opacity", "1"));
+    poly.addEventListener("mouseleave", () => poly.setAttribute("fill-opacity", "0.88"));
+  });
+
+  dtMapHost.appendChild(svg);
+
+  function renderDtLegend() {
+    const leg = document.getElementById("dt-legend");
+    leg.innerHTML = "";
+    DT_LEGENDS[layer].forEach(([label, color]) => {
+      const d = document.createElement("div"); d.className = "legend-item";
+      d.innerHTML = `<span class="dot" style="background:${color}"></span>${label}`;
+      leg.appendChild(d);
+    });
+  }
+  renderDtLegend();
+
+  document.querySelectorAll("#dt-layers .pill-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      layer = btn.dataset.layer;
+      document.querySelectorAll("#dt-layers .pill-btn").forEach(b => b.classList.toggle("active", b === btn));
+      polys.forEach((p, idx) => p.setAttribute("fill", dtColor(layer, rects[idx].block)));
+      renderDtLegend();
+    });
+  });
+
+  /* estate summary tiles */
+  document.getElementById("dt-total").textContent = DT_BLOCKS.length;
+  document.getElementById("dt-atrisk").textContent = DT_BLOCKS.filter(b => b.risk >= 20).length;
+  document.getElementById("dt-avg-ndvi").textContent = (DT_BLOCKS.reduce((s, b) => s + b.ndvi, 0) / DT_BLOCKS.length).toFixed(2);
+  document.getElementById("dt-avg-ndmi").textContent = (DT_BLOCKS.reduce((s, b) => s + b.moisture, 0) / DT_BLOCKS.length).toFixed(2);
+
+  /* blocks needing attention — worst disease risk first */
+  const dtPriority = document.getElementById("dt-priority");
+  [...DT_BLOCKS].sort((a, b) => b.risk - a.risk).slice(0, 8).forEach(b => {
+    const c = dtColor("risk", b);
+    const row = document.createElement("div"); row.className = "list-row";
+    row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${b.name} · ${b.issue}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${b.risk}%;background:${c}"></span></span></span><span class="val mono">${b.risk}%</span>`;
+    dtPriority.appendChild(row);
+  });
+
+  /* spotlight the worst block by default so the twin opens on the
+     estate's actual priority, matching the alert on Health & Yield */
+  const worstIdx = rects.findIndex(r => r.block.name === "Block 4NW");
+  if (worstIdx >= 0) selectBlock(worstIdx);
+})();
+
+/* ================================================================
+   VIEW 7 — Estate Assets (Asset Monitoring Modules)
+   Annual/on-demand land & asset surveys — a different cadence from
+   the monthly/weekly KPI tabs, so these render as static status
+   summaries rather than time-series charts.
+   ================================================================ */
+const eaInfra = document.getElementById("ea-infra-row");
+[["Roads surveyed", "42 km", "var(--green)"], ["Buildings mapped", "18", "var(--green)"], ["Drainage channels", "26", "var(--green)"], ["Boundary markers", "140", "var(--amber)"]].forEach(([l, v, dot]) => {
+  const c = document.createElement("div"); c.className = "icon-stat";
+  c.innerHTML = `<div class="icon-btn"><span class="dot" style="background:${dot}"></span></div><div class="n mono">${v}</div><div class="l">${l}</div>`;
+  eaInfra.appendChild(c);
+});
+
+const eaTree = document.getElementById("ea-tree-row");
+[["Shade trees", "3,240", "var(--green)"], ["Fuel-wood trees", "1,860", "var(--green)"], ["New plantings (12 mo)", "210", "var(--green)"], ["Lost / removed (12 mo)", "34", "var(--amber)"]].forEach(([l, v, dot]) => {
+  const c = document.createElement("div"); c.className = "icon-stat";
+  c.innerHTML = `<div class="icon-btn"><span class="dot" style="background:${dot}"></span></div><div class="n mono">${v}</div><div class="l">${l}</div>`;
+  eaTree.appendChild(c);
+});
+
+const eaHabitat = document.getElementById("ea-habitat-row");
+[["Forest area", "86 ha", "var(--green)"], ["Streams mapped", "4.2 km", "var(--green)"], ["Protected buffer zones", "12 ha", "var(--green)"], ["Share of estate", "6.1%", "var(--blue)"]].forEach(([l, v, dot]) => {
+  const c = document.createElement("div"); c.className = "icon-stat";
+  c.innerHTML = `<div class="icon-btn"><span class="dot" style="background:${dot}"></span></div><div class="n mono">${v}</div><div class="l">${l}</div>`;
+  eaHabitat.appendChild(c);
 });

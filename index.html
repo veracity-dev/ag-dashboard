@@ -33,10 +33,13 @@
       </div>
     </div>
     <nav class="tabs" id="tabs">
-      <button class="tab-btn active" data-view="v1" title="Health"><span class="tdot"></span><span class="tab-label">Health &amp; Yield</span></button>
-      <button class="tab-btn" data-view="v2" title="Input"><span class="tdot"></span><span class="tab-label">Input &amp; Resources</span></button>
-      <button class="tab-btn" data-view="v3" title="Yield"><span class="tdot"></span><span class="tab-label">Soil Health</span></button>
-      <button class="tab-btn" data-view="v4" title="Soil"><span class="tdot"></span><span class="tab-label">Predictive AI</span></button>
+      <button class="tab-btn active" data-view="v1" title="Crop Health &amp; Disease"><span class="tdot"></span><span class="tab-label">Crop Health &amp; Disease</span></button>
+      <button class="tab-btn" data-view="v2" title="Input &amp; Resources"><span class="tdot"></span><span class="tab-label">Input &amp; Resources</span></button>
+      <button class="tab-btn" data-view="v6" title="Yield &amp; Financial"><span class="tdot"></span><span class="tab-label">Yield &amp; Financial</span></button>
+      <button class="tab-btn" data-view="v3" title="Soil Health"><span class="tdot"></span><span class="tab-label">Soil Health</span></button>
+      <button class="tab-btn" data-view="v4" title="Predictive AI"><span class="tdot"></span><span class="tab-label">Predictive AI</span></button>
+      <button class="tab-btn" data-view="v5" title="Digital Twin"><span class="tdot"></span><span class="tab-label">Digital Twin</span></button>
+      <button class="tab-btn" data-view="v7" title="Estate Assets"><span class="tdot"></span><span class="tab-label">Estate Assets</span></button>
     </nav>
     <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -66,16 +69,9 @@
 
   <main class="main">
 
-  <!-- ======================= VIEW 1 — HEALTH YIELD ======================= -->
+  <!-- ======================= VIEW 1 — CROP HEALTH & DISEASE (Section A) ======================= -->
   <div class="view active" id="v1">
     <div class="grid g-12">
-      
-      <div id="yield-forecast" class="card span-6" style="display:flex; flex-direction:column;">
-        <div class="card-title">Yield &amp; Financial Trend</div>
-        <div class="card-sub">kg/ha (left axis) · Revenue at Risk, LKR M (right axis)</div>
-        <div id="c1-yield-forecast" style="flex:1; min-height:0;"></div>
-        <div class="legend" id="c1-yield-forecast-legend" style="margin-top:8px;"></div>
-      </div>
 
       <div id="overview" class="card span-6">
         <div class="side-section">
@@ -108,28 +104,11 @@
             <div class="mini-rows" id="c1-hero1-rows"></div>
           </div>
           <div class="hero-col">
-            <div class="card-title">Score history · W10–W14</div>
+            <div class="card-title">Block Health Score history · W10–W14</div>
             <div id="c1-hero1-bars"></div>
             <div id="c1-hero1-legend" style="display:flex;gap:10px;margin-top:6px;"></div>
           </div>
         </div>
-      </div>
-
-      <div id="canopy-density-score" class="card span-6 hero-card">
-        <div class="hero-head">
-          <div>
-            <div class="card-title" style="margin:0;">Canopy Density Score</div>
-            <div class="card-sub" style="margin:2px 0 0;">MTVI2 / LAI · vs. block baseline</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="metric-value mono">90.2</div>
-            <span class="delta up" style="margin-top:2px;">Stable</span>
-          </div>
-        </div>
-        <div class="hero-block" style="background-image:linear-gradient(rgba(16,22,29,.75),rgba(16,22,29,.75)),url('images/canopy-density-score-bg.jpg');background-size:cover;background-position:center 100%;position:relative;overflow:hidden;">
-          <div id="c1-hero2-spark" style="position:absolute;bottom:0;left:0;right:0;"></div>
-        </div>
-        <div class="mini-rows" id="c1-hero2-rows"></div>
       </div>
 
       <div id="block-health-score" class="card span-6" style="display:flex; flex-direction:column;">
@@ -141,22 +120,100 @@
         <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
           <div>
             <div class="card-title">Block Health Score</div>
-            <div class="card-sub">Composite index across monitored blocks · weekly</div>
-          </div>
-          <div style="display:flex; align-items:center; gap:14px;">
-            <div class="legend-item"><span class="dot" style="background:var(--green)"></span>Block Health Score</div>
-            <div class="legend-item"><span style="width:14px; height:0; border-top:2px dashed var(--red); display:inline-block;"></span>Disease Risk Score</div>
+            <div class="card-sub">Top-line indicator · canopy strength, structure &amp; disease signals · weekly</div>
           </div>
         </div>
         <div id="c1-area" style="flex:1; min-height:0;"></div>
         <div class="legend-strip" id="c1-legend">
-          <span class="card-sub" style="margin:0 8px 0 0; text-transform:uppercase; letter-spacing:.06em; font-size:10px;">Composite inputs</span>
+          <span class="card-sub" style="margin:0 8px 0 0; text-transform:uppercase; letter-spacing:.06em; font-size:10px;">Good &gt;80 · Watch 60–80 · Act &lt;60</span>
         </div>
+      </div>
+
+      <div id="canopy-density-score" class="card span-6 hero-card">
+        <div class="hero-head">
+          <div>
+            <div class="card-title" style="margin:0;">Canopy Density Score</div>
+            <div class="card-sub" style="margin:2px 0 0;">MTVI2 / LAI · pruning &amp; replanting signal · vs. block baseline</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="metric-value mono">90.2</div>
+            <span class="delta up" style="margin-top:2px;">Stable / growing</span>
+          </div>
+        </div>
+        <div class="hero-block" style="background-image:linear-gradient(rgba(16,22,29,.75),rgba(16,22,29,.75)),url('images/canopy-density-score-bg.jpg');background-size:cover;background-position:center 100%;position:relative;overflow:hidden;">
+          <div id="c1-hero2-spark" style="position:absolute;bottom:0;left:0;right:0;"></div>
+        </div>
+        <div class="mini-rows" id="c1-hero2-rows"></div>
+      </div>
+
+      <div class="card span-4">
+        <div class="card-title">Crop Vigor Score</div>
+        <div class="card-sub">Canopy greenness &amp; strength · early yield-risk signal</div>
+        <div id="ch-vigor-trend" style="height:110px;"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+          <span class="metric-value mono" style="font-size:16px;">91</span>
+          <span class="delta up">Good · strong greenness</span>
+        </div>
+      </div>
+
+      <div class="card span-4">
+        <div class="card-title">Flush Readiness Score</div>
+        <div class="card-sub">Is new growth sufficient for plucking?</div>
+        <div style="margin-top:14px;">
+          <div class="metric-value mono" style="font-size:18px;">Approaching</div>
+          <span class="delta info" style="margin-top:6px;">Next pluck window ~4 days</span>
+        </div>
+        <div class="scrubber">
+          <span class="scrubber-dot" style="background:var(--red);"></span>
+          <span class="scrubber-track"><span class="scrubber-fill" id="ch-flush-fill"></span></span>
+          <span class="scrubber-dot" style="background:var(--green);"></span>
+        </div>
+        <div class="scrubber-caption" style="display:flex; justify-content:space-between;">
+          <span>Weak / delayed</span><span>Approaching</span><span>Ready</span>
+        </div>
+      </div>
+
+      <div class="card span-4">
+        <div class="card-title">Heat Stress Score</div>
+        <div class="card-sub">Canopy surface temp vs. expected · °C anomaly</div>
+        <div id="c3-heat"></div>
+      </div>
+
+      <div class="card span-7" style="display:flex; flex-direction:column;">
+        <div class="card-title">Moisture Stress Score</div>
+        <div class="card-sub">NDMI · estate average · monthly · good &gt;0.20</div>
+        <div id="c3-ndmi-trend" style="flex:1; min-height:0;"></div>
+        <div class="legend" id="c3-ndmi-trend-legend" style="margin-top:8px;"></div>
+      </div>
+
+      <div class="card span-5">
+        <div class="card-title">Moisture Stress Score by block</div>
+        <div class="card-sub">Good &gt;0.20 · watch 0.10–0.20 · act &lt;0.10</div>
+        <div id="c3-tickets"></div>
+      </div>
+
+      <div class="card span-6">
+        <div class="card-title">Nitrogen Stress Score by block</div>
+        <div class="card-sub">Chlorophyll / nitrogen status · share of zone flagged</div>
+        <div id="c2-ndef-zones"></div>
+      </div>
+
+      <div class="card span-6">
+        <div class="card-title">Disease Hotspot Coverage by block</div>
+        <div class="card-sub">Active outbreak area now · low &lt;5% · watch 5–15% · act &gt;15%</div>
+        <div id="ch-hotspot"></div>
+      </div>
+
+      <div class="card span-6">
+        <div class="card-title">Disease Spread Rate</div>
+        <div class="card-sub">Estate-wide affected area, % · weekly</div>
+        <div id="ch-spread" style="height:150px;"></div>
+        <span class="delta up" style="margin-top:8px;">Declining · contained</span>
       </div>
 
       <div id="block-health-distribution" class="card span-6">
         <div class="card-title">Estate block map</div>
-        <div class="card-sub">Click a block · disease risk by block</div>
+        <div class="card-sub">Click a block · Disease Risk Score by block</div>
         <div class="terrace-wrap">
           <div class="terrace-svg-wrap">
             <svg id="terrace-svg" viewBox="0 0 420 460">
@@ -185,50 +242,34 @@
             <div class="terrace-row"><span>Dominant issue</span><span id="tm-issue">-</span></div>
             <div class="terrace-row"><span>Last scan</span><span id="tm-scan">-</span></div>
             <div class="terrace-legend">
-              <span class="terrace-swatch" style="background:var(--green)"></span>Target
-              <span class="terrace-swatch" style="background:var(--amber)"></span>Warning
-              <span class="terrace-swatch" style="background:var(--red)"></span>Critical
+              <span class="terrace-swatch" style="background:var(--green)"></span>Low
+              <span class="terrace-swatch" style="background:var(--amber)"></span>Moderate
+              <span class="terrace-swatch" style="background:var(--red)"></span>High
             </div>
           </div>
         </div>
       </div>
 
-      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center;">
-        <div class="card-title" style="align-self:flex-start;">Input cost savings by category</div>
-        <div id="c4-pie" style="margin-top:6px;"></div>
-        <div class="legend" style="margin-top:10px; justify-content:center;" id="c4-pie-legend"></div>
-      </div>
-
-      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Input cost savings</div>
-        <div class="ring-wrap" id="c4-ring1" style="margin-top:6px;"></div>
-      </div>
-      
-      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Blocks vs. yield baseline</div>
-        <div id="c4-pie2" style="margin-top:6px;"></div>
-      </div>
-
-      <div id="input-cost-savings" class="card span-6">
-        <div class="card-title">Input cost savings — trend</div>
-        <div class="card-sub">Cumulative savings by category, LKR '000 · monthly</div>
-        <div id="c4-cost-trend"></div>
-        <div class="legend" id="c4-cost-trend-legend" style="margin-top:8px;"></div>
-      </div>
-
-      <div class="card span-6">
-        <div class="card-title">Yield history</div>
-        <div class="card-sub">Green-leaf yield, kg/ha · monthly · this season vs. last season</div>
-        <div id="c1-yield-history"></div>
-        <div class="legend" id="c1-yield-history-legend" style="margin-top:8px;"></div>
-      </div>
-
     </div>
   </div>
 
-  <!-- ======================= VIEW 2 — INPUT & RESOURCES ======================= -->
+  <!-- ======================= VIEW 2 — INPUT & RESOURCE UTILIZATION (Section B) ======================= -->
   <div class="view" id="v2">
     <div class="grid g-12">
+
+      <div class="card span-8" style="display:flex; flex-direction:column;">
+        <div class="card-title">Nitrogen Use Reduction</div>
+        <div class="card-sub">Application volume index (blanket = 100) · monthly</div>
+        <div id="ir-n-trend" style="flex:1; min-height:0;"></div>
+        <div class="legend" id="ir-n-trend-legend" style="margin-top:8px;"></div>
+      </div>
+
+      <div class="card span-4">
+        <div class="card-title">Nitrogen Use Reduction this month</div>
+        <div class="card-sub">Blanket vs. targeted application</div>
+        <div id="ir-n-bars"></div>
+        <div class="mini-rows" id="ir-n-bars-rows"></div>
+      </div>
 
       <div class="card span-8" style="display:flex; flex-direction:column;">
         <div class="card-title">Agrochemical Use Reduction</div>
@@ -265,17 +306,12 @@
         <span class="delta up" style="margin-top:8px;">Above benchmark</span>
       </div>
 
-      <div class="card span-4">
-        <div class="card-title">Nitrogen deficiency by block</div>
-        <div class="card-sub">Share of zone flagged</div>
-        <div id="c2-ndef-zones"></div>
-      </div>
-      <div class="card span-4">
+      <div class="card span-6">
         <div class="card-title">Irrigation compliance by block</div>
         <div class="card-sub">Image-supported decisions</div>
         <div id="c2-irrigation-zones"></div>
       </div>
-      <div class="card span-4">
+      <div class="card span-6">
         <div class="card-title">Drone operations</div>
         <div class="card-sub">Monitoring efficiency</div>
         <div class="mini-rows" id="c2-drone-rows"></div>
@@ -283,45 +319,102 @@
     </div>
   </div>
 
-  <!-- ======================= VIEW 3 — SOIL HEALTH ======================= -->
+  <!-- ======================= VIEW 6 — YIELD & FINANCIAL METRICS (Section C) ======================= -->
+  <div class="view" id="v6">
+    <div class="grid g-12">
+
+      <div id="yield-forecast" class="card span-8" style="display:flex; flex-direction:column;">
+        <div class="card-title">Yield &amp; Financial Trend</div>
+        <div class="card-sub">kg/ha (left axis) · Revenue at Risk, LKR M (right axis)</div>
+        <div id="c1-yield-forecast" style="flex:1; min-height:0;"></div>
+        <div class="legend" id="c1-yield-forecast-legend" style="margin-top:8px;"></div>
+      </div>
+
+      <div class="card span-4">
+        <div class="card-title">Yield Anomaly Index</div>
+        <div class="card-sub">Current vs. expected yield · good ≥0% · watch -5 to -10% · act &lt;-10%</div>
+        <div id="yf-anomaly-spark" style="height:80px; margin-top:4px;"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+          <span class="metric-value mono" style="font-size:18px;">+3.2%</span>
+          <span class="delta up">Ahead of normal season</span>
+        </div>
+      </div>
+
+      <div class="card span-4">
+        <div class="card-title">Revenue Protected</div>
+        <div class="card-sub">Value saved by early disease detection · target: positive &amp; increasing</div>
+        <div id="yf-protected-spark" style="height:70px; margin-top:4px;"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+          <span class="metric-value mono">$18,420</span>
+          <span class="delta up">▲ 6.1%</span>
+        </div>
+      </div>
+
+      <div class="card span-4">
+        <div class="card-title">Revenue at Risk</div>
+        <div class="card-sub">Financial exposure from drought / crop stress · target: 0 or decreasing</div>
+        <div id="yf-risk-spark" style="height:70px; margin-top:4px;"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+          <span class="metric-value mono">LKR 9.5M</span>
+          <span class="delta up">▼ from 15.2M</span>
+        </div>
+      </div>
+
+      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <div class="card-title" style="align-self:flex-start;">Input Cost Savings</div>
+        <div class="card-sub" style="align-self:flex-start;">Target: positive each quarter</div>
+        <div class="ring-wrap" id="c4-ring1" style="margin-top:6px;"></div>
+      </div>
+
+      <div class="card span-6" style="display:flex; flex-direction:column; align-items:center;">
+        <div class="card-title" style="align-self:flex-start;">Input cost savings by category</div>
+        <div id="c4-pie" style="margin-top:6px;"></div>
+        <div class="legend" style="margin-top:10px; justify-content:center;" id="c4-pie-legend"></div>
+      </div>
+
+      <div class="card span-6" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <div class="card-title" style="align-self:flex-start;">Blocks vs. yield baseline</div>
+        <div id="c4-pie2" style="margin-top:6px;"></div>
+      </div>
+
+      <div id="input-cost-savings" class="card span-6">
+        <div class="card-title">Input Cost Savings — trend</div>
+        <div class="card-sub">Cumulative savings by category, LKR '000 · monthly</div>
+        <div id="c4-cost-trend"></div>
+        <div class="legend" id="c4-cost-trend-legend" style="margin-top:8px;"></div>
+      </div>
+
+      <div class="card span-6">
+        <div class="card-title">Yield history</div>
+        <div class="card-sub">Green-leaf yield, kg/ha · monthly · this season vs. last season</div>
+        <div id="c1-yield-history"></div>
+        <div class="legend" id="c1-yield-history-legend" style="margin-top:8px;"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================= VIEW 3 — SOIL HEALTH PARAMETERS (Section D) ======================= -->
   <div class="view" id="v3">
     <div class="grid g-12">
 
-      <div class="card span-7" style="display:flex; flex-direction:column;">
-        <div class="card-title">Soil Moisture Trend</div>
-        <div class="card-sub">NDMI · estate average · monthly · target &gt;0.20</div>
-        <div id="c3-ndmi-trend" style="flex:1; min-height:0;"></div>
-        <div class="legend" id="c3-ndmi-trend-legend" style="margin-top:8px;"></div>
-      </div>
-
-      <div class="card span-5" style="display:flex; flex-direction:column; gap:10px; justify-content:center;">
-        <div>
-          <div class="card-title">Erosion risk area</div>
-          <div class="metric-value mono">4.8% of estate</div>
-          <span class="delta up">Below 5% target</span>
-        </div>
-        <div style="height:1px; background:var(--border);"></div>
-        <div>
-          <div class="card-title">Waterlogging risk area</div>
-          <div class="metric-value mono">2.1% of estate</div>
-          <span class="delta up">Low risk</span>
-        </div>
+      <div class="card span-6">
+        <div class="card-title">Erosion Risk Area</div>
+        <div class="card-sub">Exposed bare-soil vulnerable to erosion</div>
+        <div class="metric-value mono" style="margin-top:8px;">4.8% of estate</div>
+        <span class="delta up" style="margin-top:6px;">Good · below 5% target</span>
       </div>
 
       <div class="card span-6">
-        <div class="card-title">Soil moisture (NDMI) by block</div>
-        <div class="card-sub">Target &gt;0.20 · warning 0.10–0.20 · critical &lt;0.10</div>
-        <div id="c3-tickets"></div>
-      </div>
-
-      <div class="card span-6">
-        <div class="card-title">Surface heat stress</div>
-        <div class="card-sub">LST anomaly vs. seasonal baseline, °C</div>
-        <div id="c3-heat"></div>
+        <div class="card-title">Waterlogging Risk</div>
+        <div class="card-sub">Standing water / poor drainage threatening root health</div>
+        <div class="metric-value mono" style="margin-top:8px;">2.1% of estate</div>
+        <span class="delta up" style="margin-top:6px;">Good · no standing-water signal</span>
       </div>
 
       <div class="span-12" style="margin-top:2px;">
-        <div class="card-sub" style="text-transform:uppercase; letter-spacing:.06em; font-size:10px; margin:0;">Soil vulnerability classification — share of estate area</div>
+        <div class="card-title" style="margin:0 0 2px;">Soil Vulnerability Classification</div>
+        <div class="card-sub" style="margin:0;">Capital-planning input · share of estate area by mineral composition · target: no expansion of high-vulnerability zones</div>
       </div>
 
       <div class="card span-3 swatch-card"><div class="card-title">Stable</div><div class="swatch" style="background:linear-gradient(135deg,var(--green),var(--green-dim));"></div><div class="metric-value mono" style="font-size:15px;">58% of area</div></div>
@@ -331,14 +424,14 @@
     </div>
   </div>
 
-  <!-- ======================= VIEW 4 — Predictive AI (Category E: 5 KPIs) ======================= -->
+  <!-- ======================= VIEW 4 — PREDICTIVE & AI TREND INDICATORS (Section E) ======================= -->
   <div class="view" id="v4">
     <div class="grid g-12">
 
       <div class="card span-8" style="display:flex; flex-direction:column;">
-        <div class="card-title">Yield Prediction Confidence</div>
-        <div class="card-sub">Model confidence trend · by season · target ≥80%</div>
-        <div id="c4-confidence-trend" style="flex:1; min-height:0;"></div>
+        <div class="card-title">30-Day Yield Forecast</div>
+        <div class="card-sub">Green-leaf yield vs. each block's own baseline, kg/ha</div>
+        <div id="c4-confidence-trend" style="margin-top:4px;"></div>
         <div class="legend" id="c4-confidence-trend-legend" style="margin-top:8px;"></div>
       </div>
       <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
@@ -352,13 +445,13 @@
       </div>
 
       <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Yield prediction confidence</div>
-        <div class="card-sub" style="align-self:flex-start;">Target ≥80% after one full season</div>
+        <div class="card-title" style="align-self:flex-start;">Forecast error</div>
+        <div class="card-sub" style="align-self:flex-start;">Target ≤10–15% after calibration</div>
         <div class="ring-wrap" id="c4-ring2" style="margin-top:6px;"></div>
       </div>
       <div class="card span-4">
-        <div class="card-title">14-day disease risk probability</div>
-        <div class="card-sub">By block · target &lt;20% · critical ≥50%</div>
+        <div class="card-title">14-Day Disease Risk Probability</div>
+        <div class="card-sub">By block · target &lt;20% · watch 20–50% · act ≥50%</div>
         <div id="c4-disease-risk"></div>
       </div>
       <div class="card span-4">
@@ -368,7 +461,7 @@
       </div>
 
       <div class="card span-6">
-        <div class="card-title">Block priority score</div>
+        <div class="card-title">Block Priority Score</div>
         <div class="card-sub">No block should stay "high priority" for &gt;2 cycles</div>
         <div id="c4-priority-list"></div>
       </div>
@@ -377,6 +470,114 @@
         <div class="card-sub">Imagery reliability feeding the KPI models</div>
         <div id="c4-quality-sources"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- ======================= VIEW 5 — DIGITAL TWIN (estate parcels) ======================= -->
+  <div class="view" id="v5">
+    <div class="grid g-12">
+
+      <div class="card span-3">
+        <div class="card-title">Blocks monitored</div>
+        <div class="metric-value mono" id="dt-total">-</div>
+        <span class="delta info" style="margin-top:8px;">Across the estate</span>
+      </div>
+      <div class="card span-3">
+        <div class="card-title">Blocks at risk</div>
+        <div class="metric-value mono" id="dt-atrisk">-</div>
+        <span class="delta down" style="margin-top:8px;">Disease risk &ge;20%</span>
+      </div>
+      <div class="card span-3">
+        <div class="card-title">Avg canopy health</div>
+        <div class="metric-value mono" id="dt-avg-ndvi">-</div>
+        <span class="delta info" style="margin-top:8px;">NDVI, estate average</span>
+      </div>
+      <div class="card span-3">
+        <div class="card-title">Avg soil moisture</div>
+        <div class="metric-value mono" id="dt-avg-ndmi">-</div>
+        <span class="delta info" style="margin-top:8px;">NDMI, estate average</span>
+      </div>
+
+      <div class="card span-8" style="display:flex; flex-direction:column;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
+          <div>
+            <div class="card-title">Digital Twin — Estate Blocks</div>
+            <div class="card-sub" style="margin:0;">20 monitored parcels · tap a block · switch the overlay layer</div>
+          </div>
+          <div class="toolbar" id="dt-layers" style="margin:0; flex-wrap:wrap;">
+            <button class="pill-btn active" data-layer="risk">Disease risk</button>
+            <button class="pill-btn" data-layer="ndvi">Canopy health</button>
+            <button class="pill-btn" data-layer="moisture">Soil moisture</button>
+            <button class="pill-btn" data-layer="yield">Yield vs. baseline</button>
+          </div>
+        </div>
+        <div id="dt-map" style="margin-top:12px;"></div>
+        <div class="legend" id="dt-legend" style="margin-top:10px;"></div>
+      </div>
+
+      <div class="card span-4">
+        <div class="card-title">Selected block</div>
+        <div class="card-sub" style="margin:0 0 10px;">Tap a parcel on the twin</div>
+        <div id="dt-name" style="font-size:15px; font-weight:700; margin-bottom:10px;">Tap a block</div>
+        <div class="terrace-row"><span>Area</span><span id="dt-area">-</span></div>
+        <div class="terrace-row"><span>Canopy health (NDVI)</span><span id="dt-ndvi">-</span></div>
+        <div class="terrace-row"><span>Soil moisture (NDMI)</span><span id="dt-moisture">-</span></div>
+        <div class="terrace-row"><span>Disease risk</span><span id="dt-risk">-</span></div>
+        <div class="terrace-row"><span>Yield vs. baseline</span><span id="dt-yield">-</span></div>
+        <div class="terrace-row"><span>Dominant issue</span><span id="dt-issue">-</span></div>
+        <div class="terrace-row"><span>Last scan</span><span id="dt-scan">-</span></div>
+        <div style="height:1px; background:var(--border); margin:12px 0;"></div>
+        <div class="card-sub" style="margin:0 0 4px;">Recommended action</div>
+        <div id="dt-action" style="font-size:12.5px; font-weight:600;">-</div>
+      </div>
+
+      <div class="card span-12">
+        <div class="card-title">Blocks needing attention</div>
+        <div class="card-sub">Ranked by disease risk · top priority first</div>
+        <div id="dt-priority"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================= VIEW 7 — ESTATE ASSETS (Asset Monitoring Modules) ======================= -->
+  <div class="view" id="v7">
+    <div class="grid g-12">
+
+      <div class="span-12" style="margin:0 0 -6px;">
+        <div class="card-sub" style="margin:0;">Refreshed annually or on demand — not watched every month, unlike the KPI tabs above</div>
+      </div>
+
+      <div class="card span-6">
+        <div class="card-title">Estate Infrastructure Survey &amp; Map</div>
+        <div class="card-sub">Roads, buildings, drainage &amp; boundaries · target: complete survey ≥1×/year</div>
+        <div class="icon-row" style="justify-content:space-between; margin-top:4px;" id="ea-infra-row"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+          <span class="card-sub" style="margin:0;">Last surveyed: 3 months ago</span>
+          <span class="delta up">Complete</span>
+        </div>
+      </div>
+
+      <div class="card span-6">
+        <div class="card-title">Estate Tree Inventory — Shade &amp; Fuel Wood</div>
+        <div class="card-sub">Counts &amp; locations · target: stable or increasing each year</div>
+        <div class="icon-row" style="justify-content:space-between; margin-top:4px;" id="ea-tree-row"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+          <span class="card-sub" style="margin:0;">Last counted: 5 months ago</span>
+          <span class="delta up">Increasing</span>
+        </div>
+      </div>
+
+      <div class="card span-12">
+        <div class="card-title">Natural Habitat Mapping</div>
+        <div class="card-sub">Forests, streams &amp; protected areas in or around the estate · target: no habitat loss each year</div>
+        <div class="icon-row" style="justify-content:space-between; margin-top:4px;" id="ea-habitat-row"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+          <span class="card-sub" style="margin:0;">Last mapped: 8 months ago</span>
+          <span class="delta up">No loss vs. last year</span>
+        </div>
+      </div>
+
     </div>
   </div>
 

@@ -211,6 +211,7 @@ html[data-theme="dark"] .delta.info{ background:rgba(95,168,211,.14); }
 .pill-btn{ border:1px solid var(--border); background:var(--surface-2); color:var(--text-dim); font-size:11.5px; font-weight:600;
   padding:7px 12px; border-radius:999px; display:flex; align-items:center; gap:6px; cursor:pointer; transition:background .15s,color .15s,border-color .15s; }
 .pill-btn:hover{ color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
+.pill-btn.active{ background:var(--accent-soft); color:var(--accent); border-color:var(--accent); }
 .pill-btn svg{ opacity:.6; }
 .round-btn{ width:32px; height:32px; border-radius:50%; border:none; flex:none; cursor:pointer;
   background:linear-gradient(155deg,var(--accent),var(--accent-dim)); display:flex; align-items:center; justify-content:center; color:#fff; transition:transform .12s ease; }
@@ -269,6 +270,10 @@ html[data-theme="dark"] .delta.info{ background:rgba(95,168,211,.14); }
 .terrace-row span:last-child{ font-weight:700; color:var(--text); }
 .terrace-legend{ border-top:1px solid var(--border); margin-top:10px; padding-top:8px; display:flex; align-items:center; gap:6px; font-size:10px; color:var(--text-faint); flex-wrap:wrap; }
 .terrace-swatch{ width:8px; height:8px; border-radius:2px; display:inline-block; flex:none; }
+
+/* ---- digital twin — estate block parcels ---- */
+#dt-map svg{ width:100%; height:auto; display:block; border-radius:var(--radius-sm); background:var(--surface-2); border:1px solid var(--border); }
+#dt-map polygon{ transition:fill-opacity .12s ease; }
 
 @media (max-width:1180px){
   .g-12 > [class*="span-"]{ grid-column: span 6; }
