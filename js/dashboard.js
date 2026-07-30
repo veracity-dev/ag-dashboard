@@ -1,24 +1,57 @@
 /* ================================================================
-   AG Drones — Dashboard  |  Chart.js v4 implementation
+   Veracity — Field Monitor  |  Chart.js v4 implementation
    ================================================================ */
 
-/* ---- resolved color palette (canvas can't read CSS vars) ---- */
-const CLR = {
-  green:    '#8ed14f',
-  greenDim: '#4f8a3a',
-  greenDeep:'#2c4a26',
-  green2:   '#a8d86a',
-  amber:    '#f2b134',
-  blue:     '#5fa8d3',
-  red:      '#e2685a',
-  surface:  '#171f28',
-  surface2: '#1e2733',
-  surface3: '#26313d',
-  border:   '#2c3946',
-  text:     '#eef2f5',
-  textDim:  '#8b97a3',
-  textFaint:'#576270',
+/* ---- theme ---- */
+const THEME_KEY = 'vfm-theme';
+const THEME = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+
+/* ---- resolved color palettes (canvas can't read CSS vars) — must
+   mirror the light/dark tokens in styles/styles.css ---- */
+const THEME_PALETTES = {
+  light: {
+    green:    '#2f9457',
+    greenDim: '#1f7442',
+    greenDeep:'#d7efe0',
+    green2:   '#4fb377',
+    amber:    '#b8791a',
+    blue:     '#2f6fa3',
+    red:      '#c14a3d',
+    accent:   '#196f82',
+    accentDim:'#124f5d',
+    surface:  '#ffffff',
+    surface2: '#eef2f5',
+    surface3: '#e2e8ed',
+    border:   '#dde3e9',
+    text:     '#17232c',
+    textDim:  '#55636f',
+    textFaint:'#8794a1',
+  },
+  dark: {
+    green:    '#8ed14f',
+    greenDim: '#4f8a3a',
+    greenDeep:'#2c4a26',
+    green2:   '#a8d86a',
+    amber:    '#f2b134',
+    blue:     '#5fa8d3',
+    red:      '#e2685a',
+    accent:   '#49b2ca',
+    accentDim:'#2e8698',
+    surface:  '#171f28',
+    surface2: '#1e2733',
+    surface3: '#26313d',
+    border:   '#2c3946',
+    text:     '#eef2f5',
+    textDim:  '#8b97a3',
+    textFaint:'#576270',
+  },
 };
+const CLR = THEME_PALETTES[THEME];
+
+/* neutral terrain-map divider — the estate block map keeps its dark
+   satellite-style rendering in both themes, so its own dividers stay
+   fixed rather than following the surface color */
+const TERRACE_DIVIDER = 'rgba(10,18,14,0.55)';
 
 /* resolve a CSS var string or pass hex through */
 const rc = c => ({
@@ -27,9 +60,21 @@ const rc = c => ({
   'var(--amber)':      CLR.amber,
   'var(--blue)':       CLR.blue,
   'var(--red)':        CLR.red,
+  'var(--accent)':     CLR.accent,
+  'var(--accent-dim)': CLR.accentDim,
   'var(--surface-3)':  CLR.surface3,
   'var(--text-faint)': CLR.textFaint,
 }[c] || c);
+
+/* ---- theme switch (sidebar) ---- */
+document.querySelectorAll('.theme-opt').forEach(btn => {
+  btn.classList.toggle('active', btn.dataset.themeChoice === THEME);
+  btn.addEventListener('click', () => {
+    if (btn.dataset.themeChoice === THEME) return;
+    localStorage.setItem(THEME_KEY, btn.dataset.themeChoice);
+    location.reload();
+  });
+});
 
 /* ---- Chart.js global dark-theme defaults ---- */
 Chart.defaults.color           = CLR.textFaint;
@@ -650,7 +695,7 @@ c1yieldSeries.forEach(s => {
       path.setAttribute("d", d);
       path.setAttribute("fill", blocks[idx].color);
       path.setAttribute("fill-opacity", "0.6");
-      path.setAttribute("stroke", CLR.surface);
+      path.setAttribute("stroke", TERRACE_DIVIDER);
       path.setAttribute("stroke-width", "1");
       path.style.cursor = "pointer";
       path.dataset.idx = idx;
@@ -663,7 +708,7 @@ c1yieldSeries.forEach(s => {
   const regions = fillsGroup.querySelectorAll("path");
   regions.forEach(region => {
     region.addEventListener("click", () => {
-      regions.forEach(p => { p.setAttribute("stroke-width", "1"); p.setAttribute("stroke", CLR.surface); });
+      regions.forEach(p => { p.setAttribute("stroke-width", "1"); p.setAttribute("stroke", TERRACE_DIVIDER); });
       region.setAttribute("stroke-width", "2.5");
       region.setAttribute("stroke", CLR.text);
       const b = blocks[region.dataset.idx];
