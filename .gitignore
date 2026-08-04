@@ -8,3 +8,11 @@ Thumbs.db
 # Editor directories
 .vscode/
 .idea/
+
+# Source documents / design references not part of the deployed site
+*.pdf
+styles/*.jfif
+styles/chart.png
+styles/first.png
+styles/second.png
+styles/sec-3.png
