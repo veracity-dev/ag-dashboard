@@ -512,24 +512,6 @@ function bannerWithOverlay(id, palette, title, big, chip) {
 /* ================================================================
    VIEW 1 — Crop Health & Disease Intelligence (Section A)
    ================================================================ */
-/* Yield & Financial Trend — three Category C KPIs on one chart:
-   average 30-Day Yield Forecast and Green Leaf Yield Estimate share the
-   left axis (both kg/ha); Revenue at Risk is a different unit (LKR) so
-   it plots against its own right-hand axis instead of being squashed
-   onto the kg/ha scale. */
-const c1yWeeks = Array.from({ length: 12 }, (_, i) => "W" + (i + 1));
-const c1yieldSeries = [
-  { label: "Avg. Yield Forecast (kg/ha)",       color: "var(--green)", axis: "y",  data: [2050, 2080, 2070, 2110, 2140, 2160, 2180, 2210, 2240, 2260, 2290, 2320] },
-  { label: "Green Leaf Yield Estimate (kg/ha)", color: "var(--blue)",  axis: "y",  data: [2000, 2030, 2060, 2090, 2100, 2130, 2150, 2170, 2200, 2220, 2250, 2280] },
-  { label: "Revenue at Risk (LKR M)",           color: "var(--amber)", axis: "y1", data: [15.2, 14.5, 13.9, 13.2, 12.6, 12.0, 11.4, 10.9, 10.4, 10.0, 9.7, 9.5] },
-];
-multiLineChart("c1-yield-forecast", c1yieldSeries, c1yWeeks, { fill: true, dualAxis: true, yLabel: "kg/ha", y1Label: "LKR M", y1Suffix: 'M' });
-const c1yLegend = document.getElementById("c1-yield-forecast-legend");
-c1yieldSeries.forEach(s => {
-  const d = document.createElement("div"); d.className = "legend-item";
-  d.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}`; c1yLegend.appendChild(d);
-});
-
 /* Yield history — actual monthly green-leaf yield, this season vs. last
    season (kg/ha), replacing the old Block 2NW spotlight banner. */
 const c1yhMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -556,10 +538,8 @@ lineChart("yf-anomaly-spark", [-2, -1, 0, 1, 2, 2.5, 3, 3.2], CLR.green, { h: 80
    the estate-overview tile, so the two tabs agree. */
 lineChart("yf-protected-spark", [14200, 15100, 15800, 16400, 17200, 17800, 18420], CLR.green, { h: 70, dots: false });
 
-/* Revenue at Risk — financial exposure from drought/crop stress,
-   reusing the same series already plotted on the Yield & Financial
-   Trend chart so the current value (LKR 9.5M) matches everywhere it
-   appears. Target: 0 or decreasing. */
+/* Revenue at Risk — financial exposure from drought/crop stress.
+   Target: 0 or decreasing. */
 lineChart("yf-risk-spark", [15.2, 14.5, 13.9, 13.2, 12.6, 12.0, 11.4, 10.9, 10.4, 10.0, 9.7, 9.5], CLR.amber, { h: 70, dots: false });
 
 mount("c4-pie", pieChart([{ v:34,color:CLR.green,label:"Fertilizer" },{ v:22,color:CLR.blue,label:"Pesticide" },{ v:28,color:CLR.amber,label:"Irrigation" },{ v:16,color:CLR.red,label:"Labor" }]));
@@ -570,7 +550,6 @@ const pieLegend = document.getElementById("c4-pie-legend");
 });
 
 document.getElementById("c4-ring1").appendChild(ringChart(64, CLR.green, 100, 10, null, { label: "Saved" })); centerLabel("c4-ring1", "$6,840", "saved / qtr");
-mount("c4-pie2", pieChart([{ v:45,color:CLR.green,label:"Above baseline" },{ v:35,color:CLR.surface3,label:"At baseline" },{ v:20,color:CLR.red,label:"Below baseline" }], 90));
 
 /* Input cost savings — trend over time, by category (same categories/
    colors as the "Input cost savings by category" pie above) */
@@ -590,10 +569,11 @@ c4costSeries.forEach(s => {
 
 /* ================================================================
    VIEW 2 — Input & Resource Utilization (Section B)
-   Nutrient Management, Chemical Input Management, plus the estate's
-   existing Water/Irrigation and Labour/Drone widgets kept as
-   supplementary (not named in the KPI framework doc, not contradicted
-   by it either).
+   The 2 KPIs the framework doc actually defines for this section:
+   Nitrogen Use Reduction (Nutrient Management) and Agrochemical Use
+   Reduction (Chemical Input Management). The Water/Irrigation and
+   Labour/Drone widgets that used to sit alongside these weren't in
+   the doc, so they've been removed rather than kept as "supplementary."
    ================================================================ */
 /* Nitrogen Use Reduction — application volume trend, blanket baseline
    vs. targeted (deficiency-zone-guided) application, Nutrient
@@ -631,47 +611,11 @@ c2agroSeries.forEach(s => {
   d.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}`; c2agroLegend.appendChild(d);
 });
 
-/* Water Use Efficiency (WUE) — kg made-tea / m3 water, vs. an estate benchmark of 3.5 */
-document.getElementById("c2-ring").appendChild(ringChart(91, CLR.green, 110, 10, null, { label: "WUE" }));
-centerLabel("c2-ring", "3.2", "kg/m³");
-
-/* quick-glance status — one headline stat per resource group */
-const c2icons = document.getElementById("c2-icons");
-[["Fertiliser rate","142 kg/ha","var(--green)"],["Irrigation applied","38 m³/ha","var(--green)"],["Targeted spray area","34% of block","var(--amber)"],["Labour hours saved","126 hrs/ha","var(--green)"],["Drone flight hours","18 hrs this mo","var(--green)"]].forEach(([l, v, dot]) => {
-  const c = document.createElement("div"); c.className = "icon-stat";
-  c.innerHTML = `<div class="icon-btn"><span class="dot" style="background:${dot}"></span></div><div class="n mono">${v}</div><div class="l">${l}</div>`;
-  c2icons.appendChild(c);
-});
-
-/* Fertiliser Cost Efficiency (FCE) — LKR per kg yield, trending down = improving */
-lineChart("c2-a1", [42, 41, 40, 39, 38, 37, 36, 35], CLR.green, {
-  h: 140, timeSeries: true, dots: true,
-  labels: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"],
-});
-
-/* Irrigation Trigger Compliance — % of decisions image-supported, target >=80% */
-document.getElementById("c2-irrigation-ring").appendChild(ringChart(83, CLR.green, 90, 9, null, { label: "Compliant" }));
-centerLabel("c2-irrigation-ring", "83%", "compliant");
-
 /* Agrochemical Use Reduction — blanket vs. targeted application, indexed */
 barChart("c2-bars", [100, 82], (i) => i === 0 ? CLR.textFaint : CLR.green, { h: 100, labels: ["Blanket", "Targeted"] });
 const c2barsRows = document.getElementById("c2-bars-rows");
 [["Reduction vs. baseline", "18%"], ["Target range", "10–20%"]].forEach(([k, v]) => {
   const r = document.createElement("div"); r.className = "mini-row"; r.innerHTML = `<span class="k">${k}</span><span class="v mono">${v}</span>`; c2barsRows.appendChild(r);
-});
-
-/* Irrigation compliance by block — target >=80% */
-const c2irr = document.getElementById("c2-irrigation-zones");
-[["Block 1NE", "88%", CLR.green], ["Block 2SE", "91%", CLR.green], ["Block 3SW", "79%", CLR.amber], ["Block 4NW", "68%", CLR.red]].forEach(([n, v, c]) => {
-  const row = document.createElement("div"); row.className = "list-row";
-  row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v};background:${c}"></span></span></span><span class="val mono">${v}</span>`;
-  c2irr.appendChild(row);
-});
-
-/* Drone operations (Group D) — Monitoring Coverage Efficiency + Drone Flight Hours */
-const c2drone = document.getElementById("c2-drone-rows");
-[["Coverage / flight", "38 ha"], ["Flight hours (month)", "18 hrs"], ["Flights completed", "6"], ["Fuel/energy use", "4.2 L/ha"]].forEach(([k, v]) => {
-  const r = document.createElement("div"); r.className = "mini-row"; r.innerHTML = `<span class="k">${k}</span><span class="v mono">${v}</span>`; c2drone.appendChild(r);
 });
 
 /* ================================================================
@@ -779,11 +723,10 @@ function generateSoilRisk() {
 
 /* ================================================================
    VIEW 4 — Predictive & AI Trend Indicators (Section E)
-   Hero card is the 30-Day Yield Forecast, benchmarked block-by-block
-   rather than as one universal figure. Reuses the Drone/Sentinel-2/
-   Landsat/AI Fusion imagery-source identities from the Crop Health
-   tab's imagery widget, so this tab reads as the AI layer behind
-   those alerts rather than a disconnected page.
+   The 3 KPIs the framework doc defines for this section: 30-Day Yield
+   Forecast, 14-Day Disease Risk Probability, and Block Priority Score.
+   AI data-quality/ops metrics that used to live here weren't in the
+   doc, so they've been removed rather than kept as "supplementary."
    ================================================================ */
 /* 30-Day Yield Forecast — predicted green-leaf yield vs. each block's
    own historical baseline (folds in the old per-hectare "Green Leaf
@@ -799,34 +742,12 @@ const c4confLegend = document.getElementById("c4-confidence-trend-legend");
   d.innerHTML = `<span class="dot" style="background:${c}"></span>${n}`; c4confLegend.appendChild(d);
 });
 
-/* AI Data Quality Score — target >85/100 */
-document.getElementById("c4-quality-ring").appendChild(ringChart(88, CLR.green, 110, 10, null, { label: "Quality score" }));
-centerLabel("c4-quality-ring", "88", "quality score");
-
-/* quick AI-ops status strip */
-const c4icons = document.getElementById("c4-icons");
-[["Model confidence","84%","var(--green)"],["Blocks at high priority","3","var(--amber)"],["Cloud-contaminated scenes","2","var(--amber)"],["Avg forecast error","9.4%","var(--green)"],["Recs this cycle","14","var(--green)"]].forEach(([l, v, dot]) => {
-  const c = document.createElement("div"); c.className = "icon-stat";
-  c.innerHTML = `<div class="icon-btn"><span class="dot" style="background:${dot}"></span></div><div class="n mono">${v}</div><div class="l">${l}</div>`;
-  c4icons.appendChild(c);
-});
-
-/* Forecast error — target <=10-15% after calibration */
-document.getElementById("c4-ring2").appendChild(ringChart(9, CLR.green, 100, 10, null, { label: "Forecast error" })); centerLabel("c4-ring2", "9%", "forecast error");
-
 /* 14-Day Disease Risk Probability by block — target <20%, watch 20-50%, act >=50% */
 const c4risk = document.getElementById("c4-disease-risk");
 [["Block 1NE", "12%", CLR.green], ["Block 2SE", "18%", CLR.green], ["Block 3SW", "34%", CLR.amber], ["Block 4NW", "58%", CLR.red]].forEach(([n, v, c]) => {
   const row = document.createElement("div"); row.className = "list-row";
   row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v};background:${c}"></span></span></span><span class="val mono">${v}</span>`;
   c4risk.appendChild(row);
-});
-
-/* Fertiliser Recommendation Accuracy — improving cycle over cycle */
-lineChart("c4-fert-accuracy", [68, 71, 70, 74, 76, 75, 79, 81], CLR.green, {
-  h: 140, timeSeries: true, dots: true,
-  labels: ["C1","C2","C3","C4","C5","C6","C7","C8"],
-  yLabel: "Accuracy", ySuffix: "%",
 });
 
 /* Block Priority Score — ranks blocks needing attention; Block 4NW is the
@@ -836,16 +757,6 @@ const c4priority = document.getElementById("c4-priority-list");
   const row = document.createElement("div"); row.className = "list-row";
   row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v}%;background:${c}"></span></span></span><span class="val mono">${v}</span>`;
   c4priority.appendChild(row);
-});
-
-/* AI Data Quality by source — same imagery sources as the Health tab;
-   Landsat is the one already shown stale there, and it's dragging the
-   quality score down here too */
-const c4quality = document.getElementById("c4-quality-sources");
-[["Drone", "96", CLR.green], ["Sentinel-2", "94", CLR.green], ["Landsat", "71", CLR.amber], ["AI Fusion", "90", CLR.green]].forEach(([n, v, c]) => {
-  const row = document.createElement("div"); row.className = "list-row";
-  row.innerHTML = `<span class="dot" style="background:${c}"></span><span class="name">${n}</span><span class="track"><span class="bar-track"><span class="bar-fill" style="width:${v}%;background:${c}"></span></span></span><span class="val mono">${v}</span>`;
-  c4quality.appendChild(row);
 });
 
 /* ================================================================

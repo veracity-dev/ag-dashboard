@@ -198,50 +198,12 @@
         <div class="mini-rows" id="c2-bars-rows"></div>
       </div>
 
-      <div class="card span-12">
-        <div class="icon-row" style="justify-content:space-between;" id="c2-icons"></div>
-      </div>
-
-      <div id="c2-fertiliser" class="card span-4">
-        <div class="card-title">Fertiliser cost efficiency</div>
-        <div class="card-sub">LKR / kg yield</div>
-        <div id="c2-a1"></div>
-      </div>
-      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Irrigation trigger compliance</div>
-        <div class="card-sub" style="align-self:flex-start;">Target ≥80%</div>
-        <div class="ring-wrap" id="c2-irrigation-ring" style="margin-top:6px;"></div>
-      </div>
-      <div id="c2-water-use" class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Water use efficiency</div>
-        <div class="card-sub" style="align-self:flex-start;">kg made-tea / m³ water</div>
-        <div class="ring-wrap" id="c2-ring" style="margin-top:6px;"></div>
-        <span class="delta up" style="margin-top:8px;">Above benchmark</span>
-      </div>
-
-      <div class="card span-6">
-        <div class="card-title">Irrigation compliance by block</div>
-        <div class="card-sub">Image-supported decisions</div>
-        <div id="c2-irrigation-zones"></div>
-      </div>
-      <div class="card span-6">
-        <div class="card-title">Drone operations</div>
-        <div class="card-sub">Monitoring efficiency</div>
-        <div class="mini-rows" id="c2-drone-rows"></div>
-      </div>
     </div>
   </div>
 
   <!-- ======================= VIEW 6 — YIELD & FINANCIAL METRICS (Section C) ======================= -->
   <div class="view" id="v6">
     <div class="grid g-12">
-
-      <div id="yield-forecast" class="card span-8" style="display:flex; flex-direction:column;">
-        <div class="card-title">Yield &amp; Financial Trend</div>
-        <div class="card-sub">kg/ha (left axis) · Revenue at Risk, LKR M (right axis)</div>
-        <div id="c1-yield-forecast" style="flex:1; min-height:0;"></div>
-        <div class="legend" id="c1-yield-forecast-legend" style="margin-top:8px;"></div>
-      </div>
 
       <div class="card span-4">
         <div class="card-title">Yield Anomaly Index</div>
@@ -283,11 +245,6 @@
         <div class="card-title" style="align-self:flex-start;">Input cost savings by category</div>
         <div id="c4-pie" style="margin-top:6px;"></div>
         <div class="legend" style="margin-top:10px; justify-content:center;" id="c4-pie-legend"></div>
-      </div>
-
-      <div class="card span-6" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Blocks vs. yield baseline</div>
-        <div id="c4-pie2" style="margin-top:6px;"></div>
       </div>
 
       <div id="input-cost-savings" class="card span-6">
@@ -353,47 +310,22 @@
   <div class="view" id="v4">
     <div class="grid g-12">
 
-      <div class="card span-8" style="display:flex; flex-direction:column;">
+      <div class="card span-12" style="display:flex; flex-direction:column;">
         <div class="card-title">30-Day Yield Forecast</div>
         <div class="card-sub">Green-leaf yield vs. each block's own baseline, kg/ha</div>
         <div id="c4-confidence-trend" style="margin-top:4px;"></div>
         <div class="legend" id="c4-confidence-trend-legend" style="margin-top:8px;"></div>
       </div>
-      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">AI data quality score</div>
-        <div class="card-sub" style="align-self:flex-start;">Target &gt;85/100</div>
-        <div class="ring-wrap" id="c4-quality-ring" style="margin-top:6px;"></div>
-      </div>
 
-      <div class="card span-12">
-        <div class="icon-row" style="justify-content:space-between;" id="c4-icons"></div>
-      </div>
-
-      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Forecast error</div>
-        <div class="card-sub" style="align-self:flex-start;">Target ≤10–15% after calibration</div>
-        <div class="ring-wrap" id="c4-ring2" style="margin-top:6px;"></div>
-      </div>
-      <div class="card span-4">
+      <div class="card span-6">
         <div class="card-title">14-Day Disease Risk Probability</div>
         <div class="card-sub">By block · target &lt;20% · watch 20–50% · act ≥50%</div>
         <div id="c4-disease-risk"></div>
       </div>
-      <div class="card span-4">
-        <div class="card-title">Fertiliser recommendation accuracy</div>
-        <div class="card-sub">AI nitrogen recs vs. crop response</div>
-        <div id="c4-fert-accuracy"></div>
-      </div>
-
       <div class="card span-6">
         <div class="card-title">Block Priority Score</div>
         <div class="card-sub">No block should stay "high priority" for &gt;2 cycles</div>
         <div id="c4-priority-list"></div>
-      </div>
-      <div class="card span-6">
-        <div class="card-title">AI data quality by source</div>
-        <div class="card-sub">Imagery reliability feeding the KPI models</div>
-        <div id="c4-quality-sources"></div>
       </div>
     </div>
   </div>

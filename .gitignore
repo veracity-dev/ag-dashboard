@@ -11,6 +11,7 @@ Thumbs.db
 
 # Source documents / design references not part of the deployed site
 *.pdf
+*.docx
 styles/*.jfif
 styles/chart.png
 styles/first.png
