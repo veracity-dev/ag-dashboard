@@ -220,14 +220,19 @@ html[data-theme="dark"] .delta.watch{ background:rgba(242,177,52,.14); }
 .mini-row .v{ font-weight:600; }
 
 /* ---- estate block map (draw-your-own, Leaflet) — Crop Health & Disease ---- */
-/* the map card and the side column sit in the same grid row; without
-   this, CSS Grid stretches the shorter one to match the taller one,
-   leaving a dead gap at the bottom instead of just being shorter */
-#dt-map-card, #dt-side-column{ align-self: start; }
-/* side column: KPI panel + priority list stacked, filling the height
-   beside the map instead of leaving the priority list as its own
-   separate full-width row above everything */
-#dt-side-column{ display:flex; flex-direction:column; gap:12px; min-width:0; }
+/* the map card sits at the top of its grid row; the side column is left
+   at the grid default (stretch) so it keeps the same top/height as the
+   map card — giving it its own align-self instead would offset its
+   bounding box within the row and break the row-grouping that
+   centerIncompleteGridRows() uses (it matches items into rows by their
+   rendered top position). The stacked cards inside are centered via
+   flexbox instead, so the visual result is the same without that side
+   effect. */
+#dt-map-card{ align-self: start; }
+/* side column: KPI panel + priority list stacked and vertically
+   centered within the full row height (matching the taller map card)
+   instead of pinned to the top */
+#dt-side-column{ display:flex; flex-direction:column; justify-content:center; gap:12px; min-width:0; }
 .dt-map-frame{ border:1px solid var(--border); background:var(--surface-2); z-index:0; border-radius:var(--radius-sm);
   margin-top:8px; height:440px; }
 .dt-map-frame > div{ height:100%; } /* the Leaflet mount div — any map using this frame (Digital Twin, Soil Risk Map) needs this or it collapses to 0 height */
@@ -318,16 +323,16 @@ html[data-theme="dark"] .delta.watch{ background:rgba(242,177,52,.14); }
 
 /* tablet / narrow-desktop: cards pair up (span-6), so the 3-column KPI
    grids get half the viewport — drop to 2 columns here rather than
-   letting tiles and sparklines get squeezed */
+   letting tiles and sparklines get squeezed. The :not() matters:
+   [class*="span-"] also matches "span-12" (it's a substring match),
+   which was forcing already-full-width cards like a hero chart or a
+   section header down to half width and pairing them with whatever
+   happened to sit next to them in the markup. */
 @media (max-width:1180px){
-  .g-12 > [class*="span-"]{ grid-column: span 6; }
+  .g-12 > [class*="span-"]:not([class~="span-12"]){ grid-column: span 6; }
   .kpi-grid{ grid-template-columns:1fr 1fr; }
   .kpi-trend-grid{ grid-template-columns:1fr 1fr; }
   .dt-map-frame{ height:420px; }
-  /* always meant to run the full card width — the generic "pair
-     everything up" rule above would otherwise squeeze the multi-tile
-     trend grid into a half column */
-  .g-12 > #dt-trend-card{ grid-column: span 12; }
 }
 @media (max-width:900px){
   /* the map needs real width to be usable for tracing a boundary —
@@ -337,13 +342,31 @@ html[data-theme="dark"] .delta.watch{ background:rgba(242,177,52,.14); }
   .g-12 > #dt-side-column{ grid-column: span 12; }
 }
 @media (max-width:680px){
-  .shell{ flex-direction:column; }
-  .sidebar{ width:100%; height:auto; position:static; flex-direction:row; flex-wrap:wrap; padding:12px; }
-  .tabs{ flex-direction:row; flex-wrap:wrap; }
-  .tab-btn{ width:auto; }
-  .sidebar-bottom{ flex-direction:row; align-items:center; margin-top:0; margin-left:auto; }
-  .sidebar-footer{ border-top:none; padding-top:0; }
-  .g-12 > [class*="span-"]{ grid-column: span 12; }
+  /* not enough width for the full 200px sidebar — auto-collapse to the
+     icon-only rail (same look as the manual .collapsed toggle) instead
+     of moving nav to the top. It stays a real sidebar on the side at
+     every screen size; the toggle button is hidden here since there's
+     no wider "expanded" state to switch to at this width. */
+  .sidebar{ width:52px; overflow-x:hidden; }
+  .sidebar .brand-name,
+  .sidebar .brand-sub,
+  .sidebar .tab-label,
+  .sidebar .user-name,
+  .sidebar .user-role,
+  .sidebar .theme-opt-label{ display:none; }
+  .sidebar .brand{ justify-content:center; }
+  .sidebar .tab-btn{ justify-content:center; padding:9px; }
+  .sidebar .theme-switch{ flex-direction:column; background:transparent; border:none; padding:0; gap:6px; }
+  .sidebar .theme-opt{ padding:6px; }
+  .sidebar-toggle{ display:none; }
+  .sidebar-footer{ justify-content:center; border-top:none; padding-top:0; }
+  /* :not(...) here isn't semantically needed (span-12 cards already
+     want span 12) — it's there so this rule's specificity matches the
+     1180px breakpoint's equivalent rule above. Without it, that rule
+     (which also matches at this narrower width, since max-width
+     queries don't exclude smaller viewports) would win on specificity
+     and cards would stay paired up instead of stacking. */
+  .g-12 > [class*="span-"]:not([class~="span-12"]){ grid-column: span 12; }
   .dt-hero-trend-info{ flex-basis:100%; }
   .dt-hero-trend-value{ font-size:30px; }
   .dt-map-frame{ height:320px; }

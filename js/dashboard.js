@@ -83,6 +83,63 @@ document.getElementById("sidebar-toggle").addEventListener("click", () => {
   document.querySelector(".sidebar").classList.toggle("collapsed");
 });
 
+/* Card grids don't always fill a full 12-column row (an odd card
+   count, or spans that don't add up to 12) — by default that just
+   leaves empty space trailing on the right. This centers that
+   leftover row instead by inserting an invisible spacer ahead of it,
+   which is cheap and never touches the real cards' own grid-column. */
+function centerIncompleteGridRows(grid) {
+  if (!grid) return;
+  grid.querySelectorAll(":scope > .row-center-spacer").forEach(s => s.remove());
+
+  const items = Array.from(grid.children).filter(c => {
+    const r = c.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+  });
+  if (!items.length) return;
+
+  const gridStyle = getComputedStyle(grid);
+  const tracks = gridStyle.gridTemplateColumns.split(" ").map(parseFloat);
+  const totalCols = tracks.length;
+  const colUnit = tracks[0];
+  const gap = parseFloat(gridStyle.columnGap) || 0;
+  if (!colUnit || !isFinite(colUnit)) return;
+
+  const rows = [];
+  let current = [];
+  let lastTop = null;
+  items.forEach(item => {
+    const top = Math.round(item.getBoundingClientRect().top);
+    if (lastTop !== null && Math.abs(top - lastTop) > 2) { rows.push(current); current = []; }
+    current.push(item);
+    lastTop = top;
+  });
+  if (current.length) rows.push(current);
+
+  rows.forEach(row => {
+    const usedCols = row.reduce((sum, item) => {
+      const span = Math.max(1, Math.round((item.getBoundingClientRect().width + gap) / (colUnit + gap)));
+      return sum + span;
+    }, 0);
+    const leftSpacerSpan = Math.floor((totalCols - usedCols) / 2);
+    if (leftSpacerSpan > 0) {
+      const spacer = document.createElement("div");
+      spacer.className = "row-center-spacer";
+      spacer.setAttribute("aria-hidden", "true");
+      spacer.style.gridColumn = `span ${leftSpacerSpan}`;
+      grid.insertBefore(spacer, row[0]);
+    }
+  });
+}
+let gridCenterResizeTimer = null;
+function scheduleGridCentering() {
+  clearTimeout(gridCenterResizeTimer);
+  gridCenterResizeTimer = setTimeout(() => {
+    document.querySelectorAll(".view.active > .grid").forEach(centerIncompleteGridRows);
+  }, 80);
+}
+window.addEventListener("resize", scheduleGridCentering);
+
 document.getElementById("tabs").addEventListener("click", e => {
   const btn = e.target.closest(".tab-btn"); if (!btn) return;
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b === btn));
@@ -92,6 +149,7 @@ document.getElementById("tabs").addEventListener("click", e => {
     document.querySelectorAll('.view.active canvas').forEach(c => {
       const ch = Chart.getChart(c); if (ch) ch.resize();
     });
+    document.querySelectorAll(".view.active > .grid").forEach(centerIncompleteGridRows);
   }, 30);
 });
 
@@ -1385,3 +1443,8 @@ const eaHabitat = document.getElementById("ea-habitat-row");
   c.innerHTML = `<div class="icon-btn"><span class="dot" style="background:${dot}"></span></div><div class="n mono">${v}</div><div class="l">${l}</div>`;
   eaHabitat.appendChild(c);
 });
+
+/* the tab-click handler centers a newly-opened view's grid, but the
+   default-active tab on first load never gets a click — do it once
+   here too, after everything above has finished rendering */
+document.querySelectorAll(".view.active > .grid").forEach(centerIncompleteGridRows);
