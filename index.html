@@ -18,6 +18,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
 <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
@@ -33,13 +35,30 @@
       </div>
     </div>
     <nav class="tabs" id="tabs">
-      <button class="tab-btn active" data-view="v1" title="Crop Health &amp; Disease"><span class="tdot"></span><span class="tab-label">Crop Health &amp; Disease</span></button>
-      <button class="tab-btn" data-view="v2" title="Input &amp; Resources"><span class="tdot"></span><span class="tab-label">Input &amp; Resources</span></button>
-      <button class="tab-btn" data-view="v6" title="Yield &amp; Financial"><span class="tdot"></span><span class="tab-label">Yield &amp; Financial</span></button>
-      <button class="tab-btn" data-view="v3" title="Soil Health"><span class="tdot"></span><span class="tab-label">Soil Health</span></button>
-      <button class="tab-btn" data-view="v4" title="Predictive AI"><span class="tdot"></span><span class="tab-label">Predictive AI</span></button>
-      <button class="tab-btn" data-view="v5" title="Digital Twin"><span class="tdot"></span><span class="tab-label">Digital Twin</span></button>
-      <button class="tab-btn" data-view="v7" title="Estate Assets"><span class="tdot"></span><span class="tab-label">Estate Assets</span></button>
+      <button class="tab-btn active" data-view="v1" title="Crop Health &amp; Disease">
+        <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3,13 C2,7 6,3 13,3 C13,10 8,13 3,13 Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M3,13 C6,10 8,7 11,4" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg></span>
+        <span class="tab-label">Crop Health &amp; Disease</span>
+      </button>
+      <button class="tab-btn" data-view="v2" title="Input &amp; Resources">
+        <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8,2 C8,2 3.5,8 3.5,10.8 A4.5,4.5 0 0 0 12.5,10.8 C12.5,8 8,2 8,2 Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span>
+        <span class="tab-label">Input &amp; Resources</span>
+      </button>
+      <button class="tab-btn" data-view="v6" title="Yield &amp; Financial">
+        <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="8.5" width="2.6" height="5.5" rx="0.6" stroke="currentColor" stroke-width="1.2"/><rect x="6.7" y="5.5" width="2.6" height="8.5" rx="0.6" stroke="currentColor" stroke-width="1.2"/><rect x="10.9" y="2.5" width="2.6" height="11.5" rx="0.6" stroke="currentColor" stroke-width="1.2"/></svg></span>
+        <span class="tab-label">Yield &amp; Financial</span>
+      </button>
+      <button class="tab-btn" data-view="v3" title="Soil Health">
+        <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8,2 C8,2 6,4 6,5.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M8,2 C8,2 10,3.3 10,4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M2,6.5 L14,6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M2,9.7 L14,9.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M2,12.9 L14,12.9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
+        <span class="tab-label">Soil Health</span>
+      </button>
+      <button class="tab-btn" data-view="v4" title="Predictive AI">
+        <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8,1.5 L9.4,6.1 L14,7.5 L9.4,8.9 L8,13.5 L6.6,8.9 L2,7.5 L6.6,6.1 Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg></span>
+        <span class="tab-label">Predictive AI</span>
+      </button>
+      <button class="tab-btn" data-view="v7" title="Estate Assets">
+        <span class="tab-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2.8,13.5 L2.8,6.2 L8,2.8 L13.2,6.2 L13.2,13.5 Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M6.2,13.5 L6.2,9.5 L9.8,9.5 L9.8,13.5" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></span>
+        <span class="tab-label">Estate Assets</span>
+      </button>
     </nav>
     <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -73,181 +92,75 @@
   <div class="view active" id="v1">
     <div class="grid g-12">
 
-      <div id="overview" class="card span-6">
-        <div class="side-section">
-          <div class="card-title" style="display:flex; align-items:center; gap:6px;">
-            Plantation overview
-          </div>
-          <div class="stat-tiles" id="c1-overview-tiles"></div>
+      <div class="card span-3 dt-summary-tile">
+        <div class="card-title">Blocks</div>
+        <div class="metric-value mono" id="dt-total">-</div>
+        <span class="delta info" style="margin-top:8px;">Across the estate</span>
+      </div>
+      <div class="card span-3 dt-summary-tile">
+        <div class="card-title">Blocks needing attention</div>
+        <div class="metric-value mono" id="dt-atrisk">-</div>
+        <span class="delta down" style="margin-top:8px;">Disease Risk Score &ge;20</span>
+      </div>
+      <div class="card span-3 dt-summary-tile">
+        <div class="card-title">Avg Crop Vigor Score</div>
+        <div class="metric-value mono" id="dt-avg-vigor">-</div>
+        <span class="delta info" style="margin-top:8px;">Estate average</span>
+      </div>
+      <div class="card span-3 dt-summary-tile">
+        <div class="card-title">Avg Disease Risk Score</div>
+        <div class="metric-value mono" id="dt-avg-risk">-</div>
+        <span class="delta info" style="margin-top:8px;">Estate average</span>
+      </div>
+
+      <div class="card span-7" id="dt-map-card" style="display:flex; flex-direction:column;">
+        <div class="card-title">Estate map — draw &amp; select blocks</div>
+        <div class="card-sub" style="margin:0;">Click "New block", trace its boundary on the map, name it, then tap it any time to view its KPIs</div>
+        <div class="toolbar" id="dt-view-toggle" style="margin-top:8px; margin-bottom:0;">
+          <button class="pill-btn primary" id="dt-new-block-btn">+ New block</button>
+          <button class="pill-btn active" data-scope="all">All blocks (average)</button>
+          <span class="card-sub" id="dt-selected-hint" style="margin:0 0 0 6px;">Tap a block on the map to inspect it individually</span>
         </div>
-        <div class="side-section">
-          <div class="stat-rows" id="c1-overview-rows"></div>
+        <div class="dt-block-chips" id="dt-block-chips"></div>
+        <div class="dt-map-frame"><div id="dt-map"></div></div>
+      </div>
+
+      <div class="span-5" id="dt-side-column">
+        <div class="card" id="dt-detail-card">
+          <div class="card-sub" style="margin:0 0 2px;" id="dt-panel-scope">Estate average</div>
+          <div id="dt-panel-title" style="font-size:16px; font-weight:700; margin:2px 0 10px;">All blocks — estate average</div>
+          <div class="kpi-grid" id="dt-kpi-grid"></div>
+          <div id="dt-panel-actions" style="display:none; gap:8px; margin-top:10px;">
+            <button class="pill-btn" id="dt-rename-btn">Rename block</button>
+            <button class="pill-btn danger" id="dt-delete-btn">Delete block</button>
+          </div>
+        </div>
+
+        <div class="card" id="dt-priority-card">
+          <div class="card-title">Priority list</div>
+          <div class="card-sub">Blocks needing attention, ranked by Disease Risk Score</div>
+          <div id="dt-priority"></div>
         </div>
       </div>
 
-      <div id="immediate-action-required" class="card span-6 hero-card-v2">
-        <div class="hero-photo-wrap" id="c1-hero1-photo" style="background-image:url('images/green-tea-bud-leaves-green-tea-plantations-morning-nature-background.jpg');background-size:cover;background-position:center 45%;">
-          <div class="hero-photo-overlay">
-            <div class="hero-photo-toprow">
-              <span class="chip-float" style="border-color:rgba(226,104,90,.45);"><span class="dot" style="background:var(--red);"></span>Priority alert</span>
-              <span class="delta down">2 of 2 cycles</span>
+      <div class="card span-12" id="dt-trend-card">
+        <div class="card-title">Block trend</div>
+        <div class="card-sub" id="dt-trend-sub">Draw a block above to see its history here</div>
+
+        <div class="dt-hero-trend-row">
+          <div class="dt-hero-trend-info">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="card-sub" style="margin:0;">Block Health Score</span>
+              <button class="dt-expand-btn" id="dt-hero-expand" aria-label="Expand Block Health Score chart" title="View full chart">&#10530;</button>
             </div>
-            <div>
-              <div class="card-title" style="color:rgba(238,242,245,.75);margin-bottom:3px;">Block 4NW</div>
-              <div class="hero-photo-big">Immediate action required</div>
-            </div>
+            <span class="dt-hero-trend-value" id="dt-hero-value">–</span>
+            <span id="dt-hero-badge"></span>
+            <span class="dt-trend-phrase" id="dt-hero-phrase"></span>
           </div>
+          <div class="dt-hero-trend-chart" id="dt-hero-trend"></div>
         </div>
-        <div class="hero-body">
-          <div class="hero-col">
-            <div class="card-title">Block metrics</div>
-            <div class="mini-rows" id="c1-hero1-rows"></div>
-          </div>
-          <div class="hero-col">
-            <div class="card-title">Block Health Score history · W10–W14</div>
-            <div id="c1-hero1-bars"></div>
-            <div id="c1-hero1-legend" style="display:flex;gap:10px;margin-top:6px;"></div>
-          </div>
-        </div>
-      </div>
 
-      <div id="block-health-score" class="card span-6" style="display:flex; flex-direction:column;">
-        <div class="toolbar">
-          <button class="pill-btn">All blocks <svg width="8" height="8" viewBox="0 0 8 8"><path d="M1,2 L4,6 L7,2" stroke="currentColor" stroke-width="1.3" fill="none"/></svg></button>
-          <button class="pill-btn">Weekly <svg width="8" height="8" viewBox="0 0 8 8"><path d="M1,2 L4,6 L7,2" stroke="currentColor" stroke-width="1.3" fill="none"/></svg></button>
-          <div style="flex:1"></div>
-        </div>
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
-          <div>
-            <div class="card-title">Block Health Score</div>
-            <div class="card-sub">Top-line indicator · canopy strength, structure &amp; disease signals · weekly</div>
-          </div>
-        </div>
-        <div id="c1-area" style="flex:1; min-height:0;"></div>
-        <div class="legend-strip" id="c1-legend">
-          <span class="card-sub" style="margin:0 8px 0 0; text-transform:uppercase; letter-spacing:.06em; font-size:10px;">Good &gt;80 · Watch 60–80 · Act &lt;60</span>
-        </div>
-      </div>
-
-      <div id="canopy-density-score" class="card span-6 hero-card">
-        <div class="hero-head">
-          <div>
-            <div class="card-title" style="margin:0;">Canopy Density Score</div>
-            <div class="card-sub" style="margin:2px 0 0;">MTVI2 / LAI · pruning &amp; replanting signal · vs. block baseline</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="metric-value mono">90.2</div>
-            <span class="delta up" style="margin-top:2px;">Stable / growing</span>
-          </div>
-        </div>
-        <div class="hero-block" style="background-image:linear-gradient(rgba(16,22,29,.75),rgba(16,22,29,.75)),url('images/canopy-density-score-bg.jpg');background-size:cover;background-position:center 100%;position:relative;overflow:hidden;">
-          <div id="c1-hero2-spark" style="position:absolute;bottom:0;left:0;right:0;"></div>
-        </div>
-        <div class="mini-rows" id="c1-hero2-rows"></div>
-      </div>
-
-      <div class="card span-4">
-        <div class="card-title">Crop Vigor Score</div>
-        <div class="card-sub">Canopy greenness &amp; strength · early yield-risk signal</div>
-        <div id="ch-vigor-trend" style="height:110px;"></div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-          <span class="metric-value mono" style="font-size:16px;">91</span>
-          <span class="delta up">Good · strong greenness</span>
-        </div>
-      </div>
-
-      <div class="card span-4">
-        <div class="card-title">Flush Readiness Score</div>
-        <div class="card-sub">Is new growth sufficient for plucking?</div>
-        <div style="margin-top:14px;">
-          <div class="metric-value mono" style="font-size:18px;">Approaching</div>
-          <span class="delta info" style="margin-top:6px;">Next pluck window ~4 days</span>
-        </div>
-        <div class="scrubber">
-          <span class="scrubber-dot" style="background:var(--red);"></span>
-          <span class="scrubber-track"><span class="scrubber-fill" id="ch-flush-fill"></span></span>
-          <span class="scrubber-dot" style="background:var(--green);"></span>
-        </div>
-        <div class="scrubber-caption" style="display:flex; justify-content:space-between;">
-          <span>Weak / delayed</span><span>Approaching</span><span>Ready</span>
-        </div>
-      </div>
-
-      <div class="card span-4">
-        <div class="card-title">Heat Stress Score</div>
-        <div class="card-sub">Canopy surface temp vs. expected · °C anomaly</div>
-        <div id="c3-heat"></div>
-      </div>
-
-      <div class="card span-7" style="display:flex; flex-direction:column;">
-        <div class="card-title">Moisture Stress Score</div>
-        <div class="card-sub">NDMI · estate average · monthly · good &gt;0.20</div>
-        <div id="c3-ndmi-trend" style="flex:1; min-height:0;"></div>
-        <div class="legend" id="c3-ndmi-trend-legend" style="margin-top:8px;"></div>
-      </div>
-
-      <div class="card span-5">
-        <div class="card-title">Moisture Stress Score by block</div>
-        <div class="card-sub">Good &gt;0.20 · watch 0.10–0.20 · act &lt;0.10</div>
-        <div id="c3-tickets"></div>
-      </div>
-
-      <div class="card span-6">
-        <div class="card-title">Nitrogen Stress Score by block</div>
-        <div class="card-sub">Chlorophyll / nitrogen status · share of zone flagged</div>
-        <div id="c2-ndef-zones"></div>
-      </div>
-
-      <div class="card span-6">
-        <div class="card-title">Disease Hotspot Coverage by block</div>
-        <div class="card-sub">Active outbreak area now · low &lt;5% · watch 5–15% · act &gt;15%</div>
-        <div id="ch-hotspot"></div>
-      </div>
-
-      <div class="card span-6">
-        <div class="card-title">Disease Spread Rate</div>
-        <div class="card-sub">Estate-wide affected area, % · weekly</div>
-        <div id="ch-spread" style="height:150px;"></div>
-        <span class="delta up" style="margin-top:8px;">Declining · contained</span>
-      </div>
-
-      <div id="block-health-distribution" class="card span-6">
-        <div class="card-title">Estate block map</div>
-        <div class="card-sub">Click a block · Disease Risk Score by block</div>
-        <div class="terrace-wrap">
-          <div class="terrace-svg-wrap">
-            <svg id="terrace-svg" viewBox="0 0 420 460">
-              <rect x="0" y="0" width="420" height="460" fill="#16241b" />
-              <path d="M0,30 L100,10 L120,90 L20,150 L0,140 Z" fill="#1c3018" />
-              <rect x="20" y="20" width="55" height="35" fill="#3a4048" stroke="#26313d" stroke-width="1.5" />
-              <ellipse cx="100" cy="45" rx="26" ry="18" fill="#1c3530" stroke="#576270" stroke-width="2" />
-              <path d="M-10,120 C40,150 30,220 90,260" fill="none" stroke="#4f8a3a" stroke-width="6" opacity="0.5" />
-              <ellipse cx="255" cy="255" rx="200" ry="205" fill="#233c19" />
-              <g id="terrace-fills"></g>
-              <g fill="none" stroke="#eef2f5" stroke-width="1.5" opacity="0.35">
-                <circle cx="255" cy="255" r="40" />
-                <circle cx="255" cy="255" r="80" />
-                <circle cx="255" cy="255" r="120" />
-                <circle cx="255" cy="255" r="160" />
-                <circle cx="255" cy="255" r="200" />
-              </g>
-            </svg>
-          </div>
-          <div class="terrace-panel">
-            <div class="card-sub" style="margin:0 0 2px;">Selected block</div>
-            <div class="name" id="tm-name">Tap a block</div>
-            <div class="terrace-row"><span>Area</span><span id="tm-area">-</span></div>
-            <div class="terrace-row"><span>Avg NDVI</span><span id="tm-ndvi">-</span></div>
-            <div class="terrace-row"><span>Disease risk</span><span id="tm-risk">-</span></div>
-            <div class="terrace-row"><span>Dominant issue</span><span id="tm-issue">-</span></div>
-            <div class="terrace-row"><span>Last scan</span><span id="tm-scan">-</span></div>
-            <div class="terrace-legend">
-              <span class="terrace-swatch" style="background:var(--green)"></span>Low
-              <span class="terrace-swatch" style="background:var(--amber)"></span>Moderate
-              <span class="terrace-swatch" style="background:var(--red)"></span>High
-            </div>
-          </div>
-        </div>
+        <div class="kpi-trend-grid" id="dt-trend-grid"></div>
       </div>
 
     </div>
@@ -285,50 +198,12 @@
         <div class="mini-rows" id="c2-bars-rows"></div>
       </div>
 
-      <div class="card span-12">
-        <div class="icon-row" style="justify-content:space-between;" id="c2-icons"></div>
-      </div>
-
-      <div id="c2-fertiliser" class="card span-4">
-        <div class="card-title">Fertiliser cost efficiency</div>
-        <div class="card-sub">LKR / kg yield</div>
-        <div id="c2-a1"></div>
-      </div>
-      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Irrigation trigger compliance</div>
-        <div class="card-sub" style="align-self:flex-start;">Target ≥80%</div>
-        <div class="ring-wrap" id="c2-irrigation-ring" style="margin-top:6px;"></div>
-      </div>
-      <div id="c2-water-use" class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Water use efficiency</div>
-        <div class="card-sub" style="align-self:flex-start;">kg made-tea / m³ water</div>
-        <div class="ring-wrap" id="c2-ring" style="margin-top:6px;"></div>
-        <span class="delta up" style="margin-top:8px;">Above benchmark</span>
-      </div>
-
-      <div class="card span-6">
-        <div class="card-title">Irrigation compliance by block</div>
-        <div class="card-sub">Image-supported decisions</div>
-        <div id="c2-irrigation-zones"></div>
-      </div>
-      <div class="card span-6">
-        <div class="card-title">Drone operations</div>
-        <div class="card-sub">Monitoring efficiency</div>
-        <div class="mini-rows" id="c2-drone-rows"></div>
-      </div>
     </div>
   </div>
 
   <!-- ======================= VIEW 6 — YIELD & FINANCIAL METRICS (Section C) ======================= -->
   <div class="view" id="v6">
     <div class="grid g-12">
-
-      <div id="yield-forecast" class="card span-8" style="display:flex; flex-direction:column;">
-        <div class="card-title">Yield &amp; Financial Trend</div>
-        <div class="card-sub">kg/ha (left axis) · Revenue at Risk, LKR M (right axis)</div>
-        <div id="c1-yield-forecast" style="flex:1; min-height:0;"></div>
-        <div class="legend" id="c1-yield-forecast-legend" style="margin-top:8px;"></div>
-      </div>
 
       <div class="card span-4">
         <div class="card-title">Yield Anomaly Index</div>
@@ -372,11 +247,6 @@
         <div class="legend" style="margin-top:10px; justify-content:center;" id="c4-pie-legend"></div>
       </div>
 
-      <div class="card span-6" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Blocks vs. yield baseline</div>
-        <div id="c4-pie2" style="margin-top:6px;"></div>
-      </div>
-
       <div id="input-cost-savings" class="card span-6">
         <div class="card-title">Input Cost Savings — trend</div>
         <div class="card-sub">Cumulative savings by category, LKR '000 · monthly</div>
@@ -412,6 +282,18 @@
         <span class="delta up" style="margin-top:6px;">Good · no standing-water signal</span>
       </div>
 
+      <div class="card span-12" id="soil-risk-map-card" style="display:flex; flex-direction:column;">
+        <div class="card-title">Soil Risk Map — by block</div>
+        <div class="card-sub" style="margin:0;">Erosion and waterlogging risk for the blocks drawn on the Crop Health &amp; Disease estate map · tap a block for its value</div>
+        <div class="toolbar" id="soil-risk-layers" style="margin-top:8px; margin-bottom:0;">
+          <button class="pill-btn active" data-layer="erosion">Erosion Risk</button>
+          <button class="pill-btn" data-layer="waterlogging">Waterlogging Risk</button>
+        </div>
+        <div class="dt-map-frame"><div id="soil-risk-map"></div></div>
+        <div class="card-sub" id="soil-risk-empty" style="display:none; margin:10px 0 0;">No blocks drawn yet — draw estate block boundaries on the Crop Health &amp; Disease tab and they'll show up here automatically.</div>
+        <div class="legend" id="soil-risk-legend" style="margin-top:10px;"></div>
+      </div>
+
       <div class="span-12" style="margin-top:2px;">
         <div class="card-title" style="margin:0 0 2px;">Soil Vulnerability Classification</div>
         <div class="card-sub" style="margin:0;">Capital-planning input · share of estate area by mineral composition · target: no expansion of high-vulnerability zones</div>
@@ -428,115 +310,23 @@
   <div class="view" id="v4">
     <div class="grid g-12">
 
-      <div class="card span-8" style="display:flex; flex-direction:column;">
+      <div class="card span-12" style="display:flex; flex-direction:column;">
         <div class="card-title">30-Day Yield Forecast</div>
         <div class="card-sub">Green-leaf yield vs. each block's own baseline, kg/ha</div>
         <div id="c4-confidence-trend" style="margin-top:4px;"></div>
         <div class="legend" id="c4-confidence-trend-legend" style="margin-top:8px;"></div>
       </div>
-      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">AI data quality score</div>
-        <div class="card-sub" style="align-self:flex-start;">Target &gt;85/100</div>
-        <div class="ring-wrap" id="c4-quality-ring" style="margin-top:6px;"></div>
-      </div>
 
-      <div class="card span-12">
-        <div class="icon-row" style="justify-content:space-between;" id="c4-icons"></div>
-      </div>
-
-      <div class="card span-4" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card-title" style="align-self:flex-start;">Forecast error</div>
-        <div class="card-sub" style="align-self:flex-start;">Target ≤10–15% after calibration</div>
-        <div class="ring-wrap" id="c4-ring2" style="margin-top:6px;"></div>
-      </div>
-      <div class="card span-4">
+      <div class="card span-6">
         <div class="card-title">14-Day Disease Risk Probability</div>
         <div class="card-sub">By block · target &lt;20% · watch 20–50% · act ≥50%</div>
         <div id="c4-disease-risk"></div>
       </div>
-      <div class="card span-4">
-        <div class="card-title">Fertiliser recommendation accuracy</div>
-        <div class="card-sub">AI nitrogen recs vs. crop response</div>
-        <div id="c4-fert-accuracy"></div>
-      </div>
-
       <div class="card span-6">
         <div class="card-title">Block Priority Score</div>
         <div class="card-sub">No block should stay "high priority" for &gt;2 cycles</div>
         <div id="c4-priority-list"></div>
       </div>
-      <div class="card span-6">
-        <div class="card-title">AI data quality by source</div>
-        <div class="card-sub">Imagery reliability feeding the KPI models</div>
-        <div id="c4-quality-sources"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================= VIEW 5 — DIGITAL TWIN (estate parcels) ======================= -->
-  <div class="view" id="v5">
-    <div class="grid g-12">
-
-      <div class="card span-3">
-        <div class="card-title">Blocks monitored</div>
-        <div class="metric-value mono" id="dt-total">-</div>
-        <span class="delta info" style="margin-top:8px;">Across the estate</span>
-      </div>
-      <div class="card span-3">
-        <div class="card-title">Blocks at risk</div>
-        <div class="metric-value mono" id="dt-atrisk">-</div>
-        <span class="delta down" style="margin-top:8px;">Disease risk &ge;20%</span>
-      </div>
-      <div class="card span-3">
-        <div class="card-title">Avg canopy health</div>
-        <div class="metric-value mono" id="dt-avg-ndvi">-</div>
-        <span class="delta info" style="margin-top:8px;">NDVI, estate average</span>
-      </div>
-      <div class="card span-3">
-        <div class="card-title">Avg soil moisture</div>
-        <div class="metric-value mono" id="dt-avg-ndmi">-</div>
-        <span class="delta info" style="margin-top:8px;">NDMI, estate average</span>
-      </div>
-
-      <div class="card span-8" style="display:flex; flex-direction:column;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px;">
-          <div>
-            <div class="card-title">Digital Twin — Estate Blocks</div>
-            <div class="card-sub" style="margin:0;">20 monitored parcels · tap a block · switch the overlay layer</div>
-          </div>
-          <div class="toolbar" id="dt-layers" style="margin:0; flex-wrap:wrap;">
-            <button class="pill-btn active" data-layer="risk">Disease risk</button>
-            <button class="pill-btn" data-layer="ndvi">Canopy health</button>
-            <button class="pill-btn" data-layer="moisture">Soil moisture</button>
-            <button class="pill-btn" data-layer="yield">Yield vs. baseline</button>
-          </div>
-        </div>
-        <div id="dt-map" style="margin-top:12px;"></div>
-        <div class="legend" id="dt-legend" style="margin-top:10px;"></div>
-      </div>
-
-      <div class="card span-4">
-        <div class="card-title">Selected block</div>
-        <div class="card-sub" style="margin:0 0 10px;">Tap a parcel on the twin</div>
-        <div id="dt-name" style="font-size:15px; font-weight:700; margin-bottom:10px;">Tap a block</div>
-        <div class="terrace-row"><span>Area</span><span id="dt-area">-</span></div>
-        <div class="terrace-row"><span>Canopy health (NDVI)</span><span id="dt-ndvi">-</span></div>
-        <div class="terrace-row"><span>Soil moisture (NDMI)</span><span id="dt-moisture">-</span></div>
-        <div class="terrace-row"><span>Disease risk</span><span id="dt-risk">-</span></div>
-        <div class="terrace-row"><span>Yield vs. baseline</span><span id="dt-yield">-</span></div>
-        <div class="terrace-row"><span>Dominant issue</span><span id="dt-issue">-</span></div>
-        <div class="terrace-row"><span>Last scan</span><span id="dt-scan">-</span></div>
-        <div style="height:1px; background:var(--border); margin:12px 0;"></div>
-        <div class="card-sub" style="margin:0 0 4px;">Recommended action</div>
-        <div id="dt-action" style="font-size:12.5px; font-weight:600;">-</div>
-      </div>
-
-      <div class="card span-12">
-        <div class="card-title">Blocks needing attention</div>
-        <div class="card-sub">Ranked by disease risk · top priority first</div>
-        <div id="dt-priority"></div>
-      </div>
-
     </div>
   </div>
 
@@ -585,7 +375,25 @@
 
 </div>
 
+<!-- ======================= EXPANDED CHART MODAL (Digital Twin "investigate" view) ======================= -->
+<div class="dt-modal-backdrop" id="dt-chart-modal" hidden>
+  <div class="dt-modal-card" role="dialog" aria-modal="true" aria-labelledby="dt-modal-title">
+    <div class="dt-modal-head">
+      <div>
+        <div class="card-sub" style="margin:0;" id="dt-modal-scope">Selected block</div>
+        <div id="dt-modal-title" style="font-size:17px; font-weight:700; margin-top:2px;">Metric</div>
+      </div>
+      <button class="dt-modal-close" id="dt-modal-close" aria-label="Close">&#10005;</button>
+    </div>
+    <div class="dt-modal-stats" id="dt-modal-stats"></div>
+    <div class="dt-modal-chart" id="dt-modal-chart"></div>
+    <div class="legend dt-modal-legend" id="dt-modal-legend"></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
 <script src="js/dashboard.js"></script>
 </body>
 </html>
