@@ -8,23 +8,33 @@ pipeline {
     }
 
     environment {
-        PORT     = '3000'
-        APP_URL  = 'http://15.206.22.207:3000'
-        SERVE_CMD = "npx serve -s . -l ${PORT}"
-        LOG_FILE = 'serve.log'
+        PORT        = '3000'
+        APP_URL     = 'http://localhost:3000'
+        LOG_FILE    = 'serve.log'
+        PID_FILE    = 'serve.pid'
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
-                echo "Building commit: ${env.GIT_COMMIT?.take(8)}"
+
+                script {
+                    echo "Building commit: ${env.GIT_COMMIT?.take(8)}"
+                }
             }
         }
 
         stage('Install dependencies') {
             steps {
                 sh '''
+                    echo "Node version:"
+                    node -v
+
+                    echo "NPM version:"
+                    npm -v
+
                     if [ -f package-lock.json ]; then
                         npm ci --omit=dev
                     else
@@ -37,8 +47,26 @@ pipeline {
         stage('Stop previous instance') {
             steps {
                 sh '''
+                    echo "Stopping previous application instance..."
+
+                    if [ -f "${PID_FILE}" ]; then
+                        OLD_PID=$(cat "${PID_FILE}")
+
+                        if kill -0 "$OLD_PID" 2>/dev/null; then
+                            echo "Stopping PID: $OLD_PID"
+                            kill "$OLD_PID" || true
+                            sleep 2
+                        fi
+
+                        rm -f "${PID_FILE}"
+                    fi
+
+                    # Fallback in case PID file does not exist
                     pkill -f "serve -s . -l ${PORT}" || true
+
                     sleep 2
+
+                    echo "Previous instance stopped."
                 '''
             }
         }
@@ -46,12 +74,21 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                    # BUILD_ID=dontKillMe stops Jenkins from reaping this background
-                    # process when the step/build finishes — without it Jenkins kills
-                    # every child process it spawned, taking the server down with it.
-                    export BUILD_ID=dontKillMe
-                    nohup ${SERVE_CMD} > ${LOG_FILE} 2>&1 < /dev/null &
-                    disown
+                    echo "Starting application on port ${PORT}..."
+
+                    # Prevent Jenkins Pipeline from killing the background process
+                    export JENKINS_NODE_COOKIE=dontKillMe
+
+                    nohup npx serve -s . -l ${PORT} \
+                        > "${LOG_FILE}" 2>&1 < /dev/null &
+
+                    APP_PID=$!
+
+                    echo "$APP_PID" > "${PID_FILE}"
+
+                    echo "Application started with PID: $APP_PID"
+
+                    sleep 3
                 '''
             }
         }
@@ -59,35 +96,84 @@ pipeline {
         stage('Health check') {
             steps {
                 sh '''
-                    echo "Waiting for server to boot..."
+                    echo "Waiting for application to become available..."
+
                     STATUS=1
+
                     for i in $(seq 1 20); do
-                        sleep 3
+
                         if curl -sf "${APP_URL}" > /dev/null 2>&1; then
-                            echo "App : OK"
+                            echo "--------------------------------"
+                            echo "Application is running successfully."
+                            echo "URL: ${APP_URL}"
+                            echo "--------------------------------"
+
                             STATUS=0
                             break
                         fi
-                        echo "Not ready yet, retry $i/20..."
+
+                        echo "Application not ready. Attempt $i/20"
+
+                        sleep 3
                     done
+
                     if [ "$STATUS" -ne 0 ]; then
-                        echo "App : FAIL"
+                        echo "--------------------------------"
+                        echo "Application health check FAILED"
+                        echo "--------------------------------"
+
+                        echo "Server log:"
+                        tail -n 100 "${LOG_FILE}" || true
+
+                        exit 1
                     fi
-                    exit $STATUS
+                '''
+            }
+        }
+
+        stage('Deployment info') {
+            steps {
+                sh '''
+                    echo "Running process:"
+                    ps aux | grep "[s]erve -s . -l ${PORT}" || true
+
+                    echo ""
+                    echo "Listening port:"
+                    ss -ltnp | grep ":${PORT}" || true
+
+                    echo ""
+                    echo "PID:"
+                    cat "${PID_FILE}" || true
                 '''
             }
         }
     }
 
     post {
-        always {
-            sh 'ps aux | grep "[s]erve -s . -l ${PORT}" || echo "No serve process found"'
-        }
-        failure {
-            sh "tail -n 80 ${LOG_FILE} || true"
-        }
+
         success {
-            echo "Deployed successfully — ${APP_URL}"
+            echo "========================================="
+            echo "Deployment successful"
+            echo "Application: http://15.206.22.207:3000"
+            echo "========================================="
+        }
+
+        failure {
+            echo "Deployment failed."
+
+            sh '''
+                echo "Last 100 lines of application log:"
+                tail -n 100 "${LOG_FILE}" || true
+            '''
+        }
+
+        always {
+            sh '''
+                echo "Application process status:"
+
+                ps aux | grep "[s]erve -s . -l ${PORT}" \
+                    || echo "No serve process found"
+            '''
         }
     }
 }
